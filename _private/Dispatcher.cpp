@@ -1,0 +1,47 @@
+/** @file Dispatcher.cpp
+ *  @brief Dispatcher class implementation
+ *
+ *  Contains collection of created event loops and dispatch invoced event to event loops
+ *
+ *  @date 2019
+ *  @author Alexander Geronime
+ */
+
+#include "Dispatcher.h"
+#include <iostream>
+#include <algorithm>
+
+namespace itc {
+    namespace _private {
+
+        Dispatcher* Dispatcher::mpInstance = nullptr;
+
+        void Dispatcher::registerThread(EventLoop* thread) {
+
+            std::lock_guard<std::recursive_mutex> lock (gMutex);
+            const std::thread::id& id = thread->getThreadId();
+            mThreads[id] = thread;
+            std::cout << "Dispatcher::registerThread " << id << " " << thread->getThreadName() << " size=" << mThreads.size() << std::endl;
+            printThreads();
+        }
+
+        EventLoop* Dispatcher::getThreadById(const std::thread::id& id)  {
+            std::lock_guard<std::recursive_mutex> lock (gMutex);
+            return mThreads.at(id);
+        }
+
+        EventLoop* Dispatcher::getThreadByName(const std::string& name)  {
+            std::lock_guard<std::recursive_mutex> lock (gMutex);
+
+            auto it = std::find_if( mThreads.begin(), mThreads.end(), [name](const std::pair<std::thread::id, EventLoop*>& p) {
+                return p.second->getThreadName() == name;
+            });
+            
+            if (it != mThreads.end()) {
+                return it->second;
+            } else {
+                return nullptr;
+            }
+        }
+    }
+}
