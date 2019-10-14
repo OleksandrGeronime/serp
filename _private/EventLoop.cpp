@@ -10,6 +10,8 @@
 #include "EventLoop.h"
 //#include <iostream>
 #include <string>
+#include <algorithm>
+#include <chrono>
 #include "Event.h"
 
 
@@ -51,20 +53,54 @@ namespace itc {
 
 		void EventLoop::push(const ICallable* request)
 		{
-			Event* event = new Event(EventType::CALL, request);
+			Event* event = new Event(request);
 
 			std::unique_lock<std::mutex> lk(mMutex);
 			mEvents.push(event);
 			mCV.notify_one();
 		}
 
+		void EventLoop::bringNextToFront() 
+		{
+			//std::cout << "EventLoop::bringNextToFront" << std::endl;
+
+			if (mTimers.size() > 1) {
+				auto frontTimer = mTimers.begin();
+				auto nextTimer = std::min_element(mTimers.begin(), mTimers.end(), 
+					[]( const Timer &a, const Timer &b )
+					{
+						return a.isStarted() && a.getStartedTime() + a.getPeriod() < b.getStartedTime() + b.getPeriod();
+					});
+
+				//std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+				if (nextTimer != mTimers.begin()) {
+					mTimers.splice(mTimers.begin(), mTimers, nextTimer, std::next(nextTimer));
+				}
+				//std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+			}
+		}
+
 		Timer& EventLoop::addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating)
 		{
 			std::unique_lock<std::mutex> lock(mMutex);
 			mTimers.emplace_back(call, period, repeating, mNextTimerId);
+			Timer& result = mTimers.back();
 			++mNextTimerId;
+
+			bringNextToFront();
+
 			mCV.notify_one();
-			return mTimers.back();
+			return result;
+		}
+
+		void EventLoop::removeTimer(const Timer& timer)
+		{
+			std::unique_lock<std::mutex> lock(mMutex);
+			mTimers.remove(timer);
+			
+			bringNextToFront();
+
+			mCV.notify_one();
 		}
 
 		void EventLoop::exitThread()
@@ -72,7 +108,7 @@ namespace itc {
 			if (!mThread)
 				return;
 
-			Event* event = new Event(EventType::SYSTEM, 0);
+			Event* event = new Event(EventType::SYSTEM, EventPriority::HIGHEST, 0);
 			{
 				std::lock_guard<std::mutex> lock(mMutex);
 				mEvents.push(event);
@@ -101,12 +137,11 @@ namespace itc {
 
 					auto timeToNextTimer = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::duration::max());
 					if (!mTimers.empty()) {
-						using namespace std::chrono_literals;
 						Timer& timer = mTimers.front();
-						auto now = std::chrono::high_resolution_clock::now();
+						auto now = std::chrono::system_clock::now();
 						auto dur = now - timer.getStartedTime();
 						timeToNextTimer = timer.getPeriod() - std::chrono::duration_cast<std::chrono::milliseconds>(dur);
-						if (timeToNextTimer <= 0ms) {
+						if (timeToNextTimer <= std::chrono::microseconds(0)) {
 							event = timer.getEvent();
 							mLastTimerId = timer.getId();
 							if (timer.isRepeating()) {
@@ -115,12 +150,13 @@ namespace itc {
 							}
 							else {
 								mTimers.remove(timer);
+								bringNextToFront();
 							}
 						}
 					}
 
 					if (event == nullptr) {
-						//while (mEvents.empty())
+						if (mEvents.empty())
 							mCV.wait_for(lock, timeToNextTimer);
 
 						if (mEvents.empty())

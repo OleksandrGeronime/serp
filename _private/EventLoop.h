@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include "../Call.h"
-#include "Timer.h"
+#include "../Timer.h"
 
 namespace itc {
 namespace _private {
@@ -41,13 +41,15 @@ public:
 	
 	void push(const ICallable* request);
 	Timer& addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating);
+	void removeTimer(const Timer& timer);
+	void bringNextToFront() ;
 
 private:
 	EventLoop(const EventLoop&);
 	EventLoop& operator=(const EventLoop&);
 
 	void call();
-
+	
 	std::thread* mThread;
 	std::queue<Event*> mEvents;
 	std::list<Timer> mTimers;

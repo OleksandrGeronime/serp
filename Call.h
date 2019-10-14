@@ -23,12 +23,12 @@ public:
 		, mParams(std::tuple<Args...>(std::forward<Args>(params)...))
 		{
 		} 
-	
+
 	void call() const override {
 		tuple_utils::apply(mFunc, mParams);
 	}
 private:
-	const std::function<void(Args...)>& mFunc;
+	const std::function<void(Args...)> mFunc;
 	std::tuple<Args...> mParams;
 };
 

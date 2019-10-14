@@ -31,8 +31,8 @@ namespace itc {
 		class Event
 		{
 		public:
-			Event(EventType type, const itc::_private::ICallable* callable)
-				: mType(type)
+			Event(const itc::_private::ICallable* callable)
+				: mType(_private::EventType::CALL)
 				, mPriority(EventPriority::MEDIUM)
 				, mpCallable(callable)
 			{}
