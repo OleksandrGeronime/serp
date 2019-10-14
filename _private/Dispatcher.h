@@ -9,15 +9,16 @@
 
 #pragma once
 
-#include "EventLoop.h"
 #include <map>
 #include <mutex>
 #include <string>
+#include <thread>
 
 namespace itc {
     namespace _private {
 
-    static std::recursive_mutex gMutex;
+        class EventLoop;
+        static std::recursive_mutex gMutex;
 
         class Dispatcher
         {
@@ -32,15 +33,15 @@ namespace itc {
 
             void registerThread(EventLoop* thread);
 
-            void printThreads() {
-                for ( auto it = mThreads.begin(); it != mThreads.end(); it++ )
-                {
-                    std::cout << it->first  
-                            << ':'
-                            << it->second->getThreadName() << " " << it->second->getThreadId()
-                            << std::endl ;
-                }        
-            }
+            // void printThreads() {
+            //     for ( auto it = mThreads.begin(); it != mThreads.end(); it++ )
+            //     {
+            //         std::cout << it->first  
+            //                 << ':'
+            //                 << it->second->getThreadName() << " " << it->second->getThreadId()
+            //                 << std::endl ;
+            //     }        
+            // }
 
             EventLoop* getThreadByName(const std::string& name);
 			EventLoop* getThreadById(const std::thread::id& id);

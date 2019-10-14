@@ -10,6 +10,9 @@
 #include "Dispatcher.h"
 #include <iostream>
 #include <algorithm>
+#include <thread>
+
+#include "EventLoop.h"
 
 namespace itc {
     namespace _private {
@@ -22,12 +25,17 @@ namespace itc {
             const std::thread::id& id = thread->getThreadId();
             mThreads[id] = thread;
             std::cout << "Dispatcher::registerThread " << id << " " << thread->getThreadName() << " size=" << mThreads.size() << std::endl;
-            printThreads();
+            //printThreads();
         }
 
         EventLoop* Dispatcher::getThreadById(const std::thread::id& id)  {
             std::lock_guard<std::recursive_mutex> lock (gMutex);
-            return mThreads.at(id);
+            if (mThreads.count(id) > 0) {
+                return mThreads.at(id);
+            } else {
+                std::cout << "Dispatcher::getThreadById ERROR" << std::endl;
+                return nullptr;
+            }
         }
 
         EventLoop* Dispatcher::getThreadByName(const std::string& name)  {
