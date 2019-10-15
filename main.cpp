@@ -24,13 +24,17 @@ struct Service2 {
     Service1* mpService1;
     int m;
     void bar(int i);
-	void bar2(int i);
+	void testRequest();
 
     void timerEvent() {
         static int i = 0;
         std::cout << itc::currentThreadName() << ": " << "timerEvent i = " << i << std::endl;
         i++;
-    } 
+    }
+
+	void onResponseSum(int sum) {
+		std::cout << itc::currentThreadName() << "Service2::onResponce: " << sum << std::endl;
+	} 
 };
 
 //-------------------------
@@ -91,6 +95,11 @@ struct Service1 {
 		counter++;
 		if (!(counter % 100)) std::cout << itc::currentThreadName() << ": " << "timer " << itc::getLastTimerId() << " " << getTimeFromStart() << std::endl;
     }
+
+	int onRequestSum(int a, int b) {
+		std::cout << itc::currentThreadName() << "Service1::onRequest: a = " << a << ", b = " << b << std::endl;
+		return a + b;
+	} 
 };
 
 //-------------------------
@@ -115,8 +124,12 @@ void Service2::bar(int i) {
     itc::invoke("bgThread1", new itc::Call<Service1, int, std::string,  Service2*>(mpService1, std::mem_fn(&Service1::foo), m, "Hello from Service2", this));
 }
 
-void Service2::bar2(int i) {
-	std::cout << itc::currentThreadName() << ": " << "Service2::bar(" << i << ")" << std::endl;
+void Service2::testRequest() {
+	std::cout << itc::currentThreadName() << ": " << "Service2::testRequest" << std::endl;
+
+	itc::invoke("bgThread1", new itc::Request<Service1, Service2, int, int, int>
+		(mpService1, this, std::mem_fn(&Service1::onRequestSum), std::mem_fn(&Service2::onResponseSum), 2, 3));
+
 }
 
 //-------------------------
@@ -146,7 +159,12 @@ int main()
 	
     itc::createEventLoop("bgThread1");
     itc::createEventLoop("bgThread2");
-	
+
+
+	itc::invoke("bgThread2", new itc::Call<Service2>(&service2, std::mem_fn(&Service2::testRequest)));
+
+
+
 	itc::invoke("bgThread1", new itc::Call<Service1, int, std::string, Service2*>(&service1, std::mem_fn(&Service1::foo), 0, "Hello from main", &service2));
 	
     itc::invoke("bgThread1", new itc::Call<Service1>(&service1, std::mem_fn(&Service1::startTimers)));
@@ -167,6 +185,7 @@ int main()
 	itc::createEventLoop("bgt8");
 	itc::createEventLoop("bgt9");
 	itc::invoke("bgt0", new itc::CallStatic<int>(loop, 0));
+
 
 
     int i = 333;
