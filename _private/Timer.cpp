@@ -7,27 +7,27 @@
  *  @author Alexander Geronime 
  */
 
-#include "Timer.h"
-#include <thread>
-#include "_private/ICallable.h"
-#include "_private/Event.h"
-#include "_private/Dispatcher.h"
-#include "_private/EventLoop.h"
+#include "../Timer.h"
+
+#include "ICallable.h"
+#include "Event.h"
+#include "Dispatcher.h"
+#include "EventLoop.h"
 
 namespace itc {
 
     Timer::Timer(const _private::ICallable* callable, std::chrono::milliseconds period, bool repeating, int timerId)
-		: mpEvent(new _private::Event(callable))
-		, mPeriod(period)
-		, mbRepeating(repeating)
-		, mbStarted(false)
-		, mStartedTime()
-		, mTimerId(timerId)
-	{}
+        : mpEvent(new _private::Event(callable))
+        , mPeriod(period)
+        , mbRepeating(repeating)
+        , mbStarted(false)
+        , mStartedTime()
+        , mTimerId(timerId)
+    {}
 
-	void Timer::call() {
-		mpEvent->getCallable()->call();
-	}
+    void Timer::call() {
+        mpEvent->getCallable()->call();
+    }
 
     void Timer::start() {
         mStartedTime = std::chrono::system_clock::now();

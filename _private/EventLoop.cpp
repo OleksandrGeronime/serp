@@ -8,198 +8,191 @@
  */
 
 #include "EventLoop.h"
+
 //#include <iostream>
-#include <string>
 #include <algorithm>
 #include <chrono>
-#include "Event.h"
 
+#include "Event.h"
+#include "../Call.h"
 
 namespace itc {
-	namespace _private {
+    namespace _private {
 
-		int	EventLoop::mNextTimerId = 0;
+        int EventLoop::mNextTimerId = 0;
 
-		EventLoop::EventLoop(const std::string& threadName) : mThread(0), mThreadName(threadName)
-		{
-		}
+        EventLoop::EventLoop(const std::string& threadName) 
+        : mbStop(false)
+        , mThread(nullptr)
+        , mThreadName(threadName)
+        , mEvents()
+        , mTimers()
+        , mLastTimerId(0)
+        , mMutex()
+        , mCV()        
+        {
+        }
 
-		EventLoop::~EventLoop()
-		{
-			exitThread();
-		}
+        EventLoop::~EventLoop()
+        {
+            exitThread();
+        }
 
-		bool EventLoop::createThread()
-		{
-			if (!mThread)
-				mThread = new std::thread(&EventLoop::call, this);	
-			return true;
-		}
+        bool EventLoop::createThread()
+        {
+            if (!mThread)
+                mThread = new std::thread(&EventLoop::run, this);    
+            return true;
+        }
 
-		std::thread::id EventLoop::getThreadId() const
-		{
-			return mThread->get_id();
-		}
+        std::thread::id EventLoop::getThreadId() const
+        {
+            return mThread->get_id();
+        }
 
-		const std::string& EventLoop::getThreadName() const
-		{
-			return mThreadName;
-		}
+        const std::string& EventLoop::getThreadName() const
+        {
+            return mThreadName;
+        }
 
-		std::thread::id EventLoop::getCurrentThreadId()
-		{
-			return std::this_thread::get_id();
-		}
+        std::thread::id EventLoop::getCurrentThreadId()
+        {
+            return std::this_thread::get_id();
+        }
 
-		void EventLoop::push(const ICallable* request)
-		{
-			Event* event = new Event(request);
+        void EventLoop::push(const ICallable* call)
+        {
+            Event* event = new Event(call);
 
-			std::unique_lock<std::mutex> lk(mMutex);
-			mEvents.push(event);
-			mCV.notify_one();
-		}
+            std::unique_lock<std::mutex> lk(mMutex);
+            mEvents.push(event);
 
-		void EventLoop::bringNextToFront() 
-		{
-			//std::cout << "EventLoop::bringNextToFront" << std::endl;
+            //std::cout << getThreadName() << " EventLoop::push" << std::endl;
+            mCV.notify_one();
+        }
 
-			if (mTimers.size() > 1) {
-				auto frontTimer = mTimers.begin();
-				auto nextTimer = std::min_element(mTimers.begin(), mTimers.end(), 
-					[]( const Timer &a, const Timer &b )
-					{
-						return a.isStarted() && a.getStartedTime() + a.getPeriod() < b.getStartedTime() + b.getPeriod();
-					});
+        void EventLoop::bringNextToFront() 
+        {
+            //std::cout << "EventLoop::bringNextToFront" << std::endl;
 
-				//std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
-				if (nextTimer != mTimers.begin()) {
-					mTimers.splice(mTimers.begin(), mTimers, nextTimer, std::next(nextTimer));
-				}
-				//std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
-			}
-		}
+            if (mTimers.size() > 1) {
+                auto frontTimer = mTimers.begin();
+                auto nextTimer = std::min_element(mTimers.begin(), mTimers.end(), 
+                    []( const Timer &a, const Timer &b )
+                    {
+                        return a.isStarted() && a.getStartedTime() + a.getPeriod() < b.getStartedTime() + b.getPeriod();
+                    });
 
-		Timer& EventLoop::addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating)
-		{
-			std::unique_lock<std::mutex> lock(mMutex);
-			mTimers.emplace_back(call, period, repeating, mNextTimerId);
-			Timer& result = mTimers.back();
-			++mNextTimerId;
+                //std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+                if (nextTimer != mTimers.begin()) {
+                    mTimers.splice(mTimers.begin(), mTimers, nextTimer, std::next(nextTimer));
+                }
+                //std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+            }
+        }
 
-			bringNextToFront();
+        Timer& EventLoop::addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating)
+        {
+            std::unique_lock<std::mutex> lock(mMutex);
+            mTimers.emplace_back(call, period, repeating, mNextTimerId);
+            Timer& result = mTimers.back();
+            ++mNextTimerId;
 
-			mCV.notify_one();
-			return result;
-		}
+            bringNextToFront();
 
-		void EventLoop::removeTimer(const Timer& timer)
-		{
-			std::unique_lock<std::mutex> lock(mMutex);
-			mTimers.remove(timer);
-			
-			bringNextToFront();
+            //std::cout << getThreadName() << " EventLoop::addTimer" << std::endl;
+            mCV.notify_one();
+            return result;
+        }
 
-			mCV.notify_one();
-		}
+        void EventLoop::removeTimer(const Timer& timer)
+        {
+            std::unique_lock<std::mutex> lock(mMutex);
+            mTimers.remove(timer);
+            
+            bringNextToFront();
 
-		void EventLoop::exitThread()
-		{
-			if (!mThread)
-				return;
+            //std::cout << getThreadName() << " EventLoop::removeTimer" << std::endl;
+            mCV.notify_one();
+        }
 
-			Event* event = new Event(EventType::SYSTEM, EventPriority::HIGHEST, 0);
-			{
-				std::lock_guard<std::mutex> lock(mMutex);
-				mEvents.push(event);
-				mCV.notify_one();
-			}
+        void EventLoop::exitThread()
+        {
+            if (!mThread)
+                return;
 
-			mThread->join();
-			delete mThread;
-			mThread = 0;
-		}
+            Event* event = new Event(EventType::SYSTEM, EventPriority::HIGHEST, 0);
+            {
+                std::lock_guard<std::mutex> lock(mMutex);
+                mEvents.push(event);                
+                mCV.notify_one();
+            }
 
-		void EventLoop::call()
-		{   
-			//std::cout << "0" << std::endl;
-	
-			while (1)
-			{
+            mThread->join();
+            delete mThread;
+            mThread = 0;
+        }
 
-				//std::cout << "1" << std::endl;
+        void EventLoop::run()
+        {    
+            while (true)
+            {
+                //std::cout << getThreadName() << " loop" << std::endl;
 
-				const Event* event = nullptr;
-				bool bDeleteCallable = true;
-				{
-					std::unique_lock<std::mutex> lock(mMutex);
-					
+                const Event* event = nullptr;
+                bool bDeleteCallable = true;
+                {
+                    std::unique_lock<std::mutex> lock(mMutex);
+                    //std::cout << getThreadName() << " pass lock" << std::endl;
+                
+                    // std::contidion_variable::wait_for with max period not wait, so will use just some big period value for wait if no timers 
+                    //auto timeToNextTimer = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::duration::max());
+                    auto timeToNextTimer = std::chrono::milliseconds(1000000);
+                    if (!mTimers.empty()) {
+                        Timer& timer = mTimers.front();
+                        if (timer.isStarted()) {
+                            auto now = std::chrono::system_clock::now();
+                            auto dur = now - timer.getStartedTime();
+                            timeToNextTimer = timer.getPeriod() - std::chrono::duration_cast<std::chrono::milliseconds>(dur);
+                            if (timeToNextTimer <= std::chrono::microseconds(0)) {
+                                event = timer.getEvent();
+                                mLastTimerId = timer.getId();
+                                if (timer.isRepeating()) {
+                                    timer.start();
+                                    bDeleteCallable = false;
+                                }
+                                else {
+                                    mTimers.remove(timer);
+                                    bringNextToFront();
+                                }
+                            }
+                        }
+                    }
+                    //std::cout << getThreadName() << " checked timer" << std::endl;
 
-					auto timeToNextTimer = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::duration::max());
-					if (!mTimers.empty()) {
-						Timer& timer = mTimers.front();
-						auto now = std::chrono::system_clock::now();
-						auto dur = now - timer.getStartedTime();
-						timeToNextTimer = timer.getPeriod() - std::chrono::duration_cast<std::chrono::milliseconds>(dur);
-						if (timeToNextTimer <= std::chrono::microseconds(0)) {
-							event = timer.getEvent();
-							mLastTimerId = timer.getId();
-							if (timer.isRepeating()) {
-								timer.start();
-								bDeleteCallable = false;
-							}
-							else {
-								mTimers.remove(timer);
-								bringNextToFront();
-							}
-						}
-					}
+                    if (event == nullptr) {
+                        if (mEvents.empty()) {
+                            //std::cout << getThreadName() << " wait_for " << timeToNextTimer.count() << std::endl;
+                            mCV.wait_for(lock, timeToNextTimer);
+                        }
+                        
+                        if (mEvents.empty())
+                            continue;
 
-					if (event == nullptr) {
-						if (mEvents.empty())
-							mCV.wait_for(lock, timeToNextTimer);
+                        event = mEvents.front();
+                        mEvents.pop();
+                    }
+                }
 
-						if (mEvents.empty())
-							continue;
+                //std::cout << getThreadName() << " got event and call" << std::endl;
+                const ICallable* callable = event->getCallable();
+                callable->call();
+                
+                if (bDeleteCallable) {
+                    delete event;
+                }
+            }
+        }
 
-						event = mEvents.front();
-						mEvents.pop();
-					}
-				}
-
-				switch (event->getType())
-				{
-				case EventType::CALL:
-				{
-					const ICallable* callable = event->getCallable();
-					callable->call();
-					break;
-				}
-
-				case EventType::SYSTEM:
-				{
-					std::unique_lock<std::mutex> lock(mMutex);
-					Event* eventToDelete = nullptr;
-					while (!mEvents.empty())
-					{
-						eventToDelete = mEvents.front();
-						mEvents.pop();
-						delete eventToDelete;
-					}
-
-					std::cout << "Exit thread on " << mThreadName << std::endl;
-					return;
-				}
-
-				default:
-					break;
-				}
-
-				if (bDeleteCallable) {
-					delete event;
-				}
-			}
-		}
-
-	}
+    }
 }

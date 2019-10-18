@@ -9,13 +9,13 @@
 
 namespace itc {
 
-	namespace _private {
+    namespace _private {
 
-		class ICallable {
-		public:
-			virtual ~ICallable() {};
-			virtual void call() const = 0;
-		};
+        class ICallable {
+        public:
+            virtual ~ICallable() {};
+            virtual void call() const = 0;
+        };
 
-	}
+    }
 }

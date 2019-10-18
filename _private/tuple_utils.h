@@ -78,4 +78,27 @@ namespace tuple_utils {
         return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Args...>>(tup));
     }
 
+
+
+
+
+
+    template<typename Context, typename Ret, class... Args, int... Indexes > 
+    Ret apply_helper(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, index_tuple< Indexes... >, std::tuple<Args...>&& tup) 
+    {
+        return pf(context, std::forward<Args>( std::get<Indexes>(tup))...);
+    } 
+
+    template<typename Context, typename Ret, class ... Args> 
+    Ret apply(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, const std::tuple<Args...>&  tup)
+    {
+        return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::tuple<Args...>(tup));
+    }
+
+    template<typename Context, typename Ret, class ... Args> 
+    Ret apply(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, std::tuple<Args...>&&  tup)
+    {
+        return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Args...>>(tup));
+    }
+
 }
