@@ -33,24 +33,14 @@ namespace itc {
 
             void registerThread(EventLoop* thread);
 
-            // void printThreads() {
-            //     for ( auto it = mThreads.begin(); it != mThreads.end(); it++ )
-            //     {
-            //         std::cout << it->first  
-            //                 << ':'
-            //                 << it->second->getThreadName() << " " << it->second->getThreadId()
-            //                 << std::endl ;
-            //     }        
-            // }
+            void printThreads() const;
 
-            EventLoop* getThreadByName(const std::string& name);
-			EventLoop* getThreadById(const std::thread::id& id);
+            EventLoop* getThreadByName(const std::string& name) const;
+            EventLoop* getThreadById(const std::thread::id& id) const;
             
         private:
-            Dispatcher(){};
+            Dispatcher();
 
-            
-            
             static Dispatcher* mpInstance;
             std::map<std::thread::id, EventLoop*> mThreads;
         };

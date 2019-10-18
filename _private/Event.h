@@ -9,61 +9,39 @@
 
 #pragma once
 
-#include "ICallable.h"
-
 namespace itc {
-	namespace _private {
+    namespace _private {
 
-		enum EventType {
-			SYSTEM,
-			CALL,
-			TIMER,
-		};
+        class ICallable;
 
-		enum EventPriority {
-			LOWEST,
-			LOW,
-			MEDIUM,
-			HIGH,
-			HIGHEST
-		};
+        enum EventType {
+            SYSTEM,
+            CALL
+        };
 
-		class Event
-		{
-		public:
-			Event(const itc::_private::ICallable* callable)
-				: mType(_private::EventType::CALL)
-				, mPriority(EventPriority::MEDIUM)
-				, mpCallable(callable)
-			{}
+        enum EventPriority {
+            HIGHEST,
+            HIGH,
+            MEDIUM,
+            LOW,
+            LOWEST
+        };
 
-			Event(EventType type, EventPriority priority, const itc::_private::ICallable* callable)
-				: mType(type)
-				, mPriority(priority)
-				, mpCallable(callable)
-			{}
+        class Event
+        {
+        public:
+            Event(const itc::_private::ICallable* callable);
+            Event(EventType type, EventPriority priority, const itc::_private::ICallable* callable);
+            ~Event();
 
-			~Event()
-			{
-				delete mpCallable;
-			}
+            inline EventType getType() const { return mType; }
+            inline EventPriority getPriority() const { return mPriority; }
+            inline const ICallable* getCallable() const { return mpCallable; }
 
-			inline EventType getType() const {
-				return mType;
-			}
-
-			inline EventPriority getPriority() const {
-				return mPriority;
-			}
-
-			inline const ICallable* getCallable() const {
-				return mpCallable;
-			}
-
-		private:
-			const EventType mType;
-			const EventPriority mPriority;
-			const ICallable* mpCallable;
-		};
-	}
+        private:
+            const EventType mType;
+            const EventPriority mPriority;
+            const ICallable* mpCallable;
+        };
+    }
 }
