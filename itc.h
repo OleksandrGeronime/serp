@@ -13,6 +13,7 @@
 #include "Call.h"
 #include "Timer.h"
 
+<<<<<<< HEAD
 #define DECLARE_CALL(CONNECTOR, CLASS, METHOD, ...) \
 namespace CONNECTOR { \
     typedef itc::Call<CLASS, ##__VA_ARGS__> Call; \
@@ -34,4 +35,14 @@ namespace itc {
     void deleteTimer(const std::string& threadName, const Timer& timer);
     int getLastTimerId();
     const std::string& currentThreadName();
+=======
+namespace itc {
+    void createEventLoop(const std::string& threadName);
+    bool invoke(const std::string& threadName, const _private::ICallable* call);
+	Timer& createTimer(const std::string& threadName, const _private::ICallable* call, 
+		std::chrono::milliseconds period, bool repeating);
+    void deleteTimer(const std::string& threadName, const Timer& timer);
+	int getLastTimerId();
+	const std::string& currentThreadName();
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 }

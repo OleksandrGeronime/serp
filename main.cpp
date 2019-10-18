@@ -24,7 +24,11 @@ struct Service2 {
     Service1* mpService1;
     int m;
     void bar(int i);
+<<<<<<< HEAD
     void testRequest();
+=======
+	void testRequest();
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 
     void timerEvent() {
         static int i = 0;
@@ -32,9 +36,15 @@ struct Service2 {
         i++;
     }
 
+<<<<<<< HEAD
     void onResponseSum(int sum) {
         std::cout << itc::currentThreadName() << ": " << "Service2::onResponce: " << sum << std::endl;
     } 
+=======
+	void onResponseSum(int sum) {
+		std::cout << itc::currentThreadName() << "Service2::onResponce: " << sum << std::endl;
+	} 
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 };
 
 //-------------------------
@@ -96,10 +106,17 @@ struct Service1 {
         if (!(counter % 100)) std::cout << itc::currentThreadName() << ": " << "timer " << itc::getLastTimerId() << " " << getTimeFromStart() << std::endl;
     }
 
+<<<<<<< HEAD
     int onRequestSum(int a, int b) {
         std::cout << itc::currentThreadName() << ": " << "Service1::onRequest: a = " << a << ", b = " << b << std::endl;
         return a + b;
     } 
+=======
+	int onRequestSum(int a, int b) {
+		std::cout << itc::currentThreadName() << "Service1::onRequest: a = " << a << ", b = " << b << std::endl;
+		return a + b;
+	} 
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 };
 
 //-------------------------
@@ -131,12 +148,19 @@ void Service2::bar(int i) {
 }
 
 void Service2::testRequest() {
+<<<<<<< HEAD
     std::cout << itc::currentThreadName() << ": " << "Service2::testRequest" << std::endl;
 
     itc::invoke("bgThread1", new SR1::Request(mpService1, this, SR1::onRequestSum, SR1::onResponseSum, 6, 7 ));
 
     //itc::invoke("bgThread1", new itc::Request<Service1, Service2, int, int, int>
     //    (mpService1, this, std::mem_fn(&Service1::onRequestSum), std::mem_fn(&Service2::onResponseSum), 2, 3));
+=======
+	std::cout << itc::currentThreadName() << ": " << "Service2::testRequest" << std::endl;
+
+	itc::invoke("bgThread1", new itc::Request<Service1, Service2, int, int, int>
+		(mpService1, this, std::mem_fn(&Service1::onRequestSum), std::mem_fn(&Service2::onResponseSum), 2, 3));
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 
 }
 
@@ -190,6 +214,20 @@ int main()
     
     itc::createEventLoop("bgThread1");
     itc::createEventLoop("bgThread2");
+<<<<<<< HEAD
+=======
+
+
+	itc::invoke("bgThread2", new itc::Call<Service2>(&service2, std::mem_fn(&Service2::testRequest)));
+
+
+
+	itc::invoke("bgThread1", new itc::Call<Service1, int, std::string, Service2*>(&service1, std::mem_fn(&Service1::foo), 0, "Hello from main", &service2));
+	
+    itc::invoke("bgThread1", new itc::Call<Service1>(&service1, std::mem_fn(&Service1::startTimers)));
+	
+    itc::invoke("bgThread2", new itc::CallStatic<int>(func, 5));
+>>>>>>> 520db933c96997436910b6a57e95c7dbcc8b23cc
 
     AAA::B b;
 
@@ -229,6 +267,7 @@ int main()
     itc::invoke("bgt0", new itc::CallStatic<int>(loop, 0));
 
 */
+
 
     int i = 333;
     std::string msg = "HELLO WP1";
