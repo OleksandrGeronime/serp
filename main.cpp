@@ -3,6 +3,8 @@
 
 #include <thread>
 #include <chrono>
+#include <string>
+#include <tuple>
 
 static std::chrono::system_clock::time_point gAppStartTime = std::chrono::system_clock::now();
 
@@ -171,15 +173,20 @@ namespace AAA {
     };
 }
 
-DECLARE_CALL(B_Call1, AAA::B, foo, int, float)
-DECLARE_CALL(B_Call2, AAA::B, foo, int)
+//DECLARE_CALL(B_Call1, AAA::B, foo, int, float)
+//DECLARE_CALL(B_Call2, AAA::B, foo, int)
 
 
-DECLARE_CALL(Service1_Call1, Service1, foo, int, std::string, Service2*)
 
-DECLARE_CALL(Service1_Call2, Service1, startTimers)
 
-DECLARE_CALL(Service2_Call1, Service2, testRequest)
+DECLARE_CALL(B_Call1, "bgThread1", AAA::B, foo, int, float)
+
+
+//DECLARE_CALL(Service1_Call1, Service1, foo, int, std::string, Service2*)
+
+//DECLARE_CALL(Service1_Call2, Service1, startTimers)
+
+//DECLARE_CALL(Service2_Call1, Service2, testRequest)
 
 int main()
 {    
@@ -194,21 +201,23 @@ int main()
     AAA::B b;
 
     
-    itc::invoke("bgThread1", new B_Call1::Call(&b, B_Call1::foo, 6, 3.4));
-    itc::invoke("bgThread1", new B_Call2::Call(&b, B_Call2::foo, 4));
+//    itc::invoke("bgThread1", new B_Call1::Call(&b, B_Call1::foo, 6, 3.4f));
+//    itc::invoke("bgThread1", new B_Call2::Call(&b, B_Call2::foo, 4));
+
+	itc::invoke(B_Call1::Call(&b, B_Call1::Params(8, 3.5f)));
 
 /*    itc::invoke("bgThread1", new itc::CallStatic<int>(func, 5));
 
     
     itc::invoke("bgThread1", new Service1_Call1::Call(&service1, Service1_Call1::foo, 0, "Hello from main", &service2));
-*/
+
     itc::invoke("bgThread1", new Service1_Call2::Call(&service1, Service1_Call2::startTimers));
 
 
 
     itc::invoke("bgThread2", new Service2_Call1::Call(&service2, Service2_Call1::testRequest));
 
-
+*/
 
 
 
