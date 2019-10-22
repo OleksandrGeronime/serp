@@ -44,7 +44,7 @@ namespace itc {
             if (mThreads.count(id) > 0) {
                 return mThreads.at(id);
             } else {
-                std::cerr << "Dispatcher::getThreadById ERROR id = " << id << std::endl;
+                //std::cerr << "Dispatcher::getThreadById ERROR id = " << id << std::endl;
                 //printThreads();
                 return nullptr;
             }
