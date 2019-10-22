@@ -57,6 +57,7 @@ namespace itc {
     void createEventLoop(const std::string& threadName);
     bool invoke(const itc::_private::CallBinder& callBinder);
     bool invoke(const std::string& threadName, const _private::ICallable* call);
+    Timer& timer(const itc::_private::CallBinder& callBinder, std::chrono::milliseconds period, bool repeating);
     Timer& createTimer(const std::string& threadName, const _private::ICallable* call, 
         std::chrono::milliseconds period, bool repeating);
     void deleteTimer(const std::string& threadName, const Timer& timer);

@@ -9,6 +9,8 @@
 
 #include "../Timer.h"
 
+#include <iostream>
+
 #include "ICallable.h"
 #include "Event.h"
 #include "Dispatcher.h"
@@ -23,7 +25,14 @@ namespace itc {
         , mbStarted(false)
         , mStartedTime()
         , mTimerId(timerId)
-    {}
+    {
+        //std::cout << "Timer" << std::endl;
+    }
+
+    Timer::~Timer()
+    {
+        //std::cout << "~Timer" << std::endl;
+    }
 
     void Timer::call() {
         mpEvent->getCallable()->call();
@@ -33,6 +42,8 @@ namespace itc {
         mStartedTime = std::chrono::system_clock::now();
         mbStarted = true;
         _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->bringNextToFront();
+
+        //std::cout << "Timer::start()" << std::endl;
     };
 
     void Timer::stop() { 

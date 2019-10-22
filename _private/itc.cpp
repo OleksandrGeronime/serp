@@ -44,6 +44,10 @@ namespace itc {
         return result; 
     }
 
+    Timer& timer(const itc::_private::CallBinder& callBinder, std::chrono::milliseconds period, bool repeating) {
+        return createTimer(callBinder.getThreadName(), callBinder.getCallable(), period, repeating);
+    }
+
     Timer& createTimer(const std::string& threadName, const _private::ICallable* call, 
         std::chrono::milliseconds period, bool repeating) {
 

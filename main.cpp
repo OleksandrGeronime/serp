@@ -59,39 +59,7 @@ struct Service1 {
         //itc::invoke("bgThread2", new itc::Call<Service2, int>(pService2, std::mem_fn(&Service2::bar), i));
     }
 
-    void startTimers() {        
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(10), true).start();
-        /*itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(4), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(5), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(3), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(2), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(6), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(200), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(500), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(300), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(250), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(350), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(400), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(550), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(330), true).start();
-        itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(220), true).start();
-
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(10), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(4), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(5), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(3), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(2), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(6), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(200), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(500), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(300), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(250), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(350), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(400), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(550), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(330), true).start();
-        itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(220), true).start();
-    */}
+    void startTimers();
 
     void timerEvent() {
         static int counter = 0;
@@ -112,6 +80,8 @@ struct Service1 {
 
 DECLARE_CALL(Service2_testRequest, THREAD_2, Service2, testRequest)
 DECLARE_REQUEST(Service1_requestSum, THREAD_1, Service2, onResponseSum, int, Service1, onRequestSum, int, int)
+
+DECLARE_CALL(Service1_timerEvent, THREAD_1, Service1, timerEvent)
 
 //-------------------------
 // Thread bgThread2 START
@@ -154,9 +124,55 @@ void Service2::onResponseSum(int sum) {
     itc::invoke(Service2_testRequest::Call(this, Service2_testRequest::Params()));
 } 
 
+
+
 //-------------------------
 // Thread bgThread2 END
 //-------------------------
+
+
+
+void Service1::startTimers() {
+    std::cout << itc::currentThreadName() << ": " << "Service1::startTimers" << std::endl;
+    
+    auto& t = itc::timer(Service1_timerEvent::Call(this), std::chrono::seconds(1), true);
+    t.start();
+    //itc::timer(Service1_timerEvent::Call(this), std::chrono::seconds(1), true).start();
+
+    //itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(10), true).start();
+    /*itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(4), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(5), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(3), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(2), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(6), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(200), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(500), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(300), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(250), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(350), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(400), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(550), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(330), true).start();
+    itc::createTimer("bgThread1", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(220), true).start();
+
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(10), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(4), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(5), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(3), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(2), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::seconds(6), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(200), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(500), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(300), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(250), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(350), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(400), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(550), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(330), true).start();
+    itc::createTimer("bgThread2", new itc::Call<Service1>(this, std::mem_fn(&Service1::timerEvent)), std::chrono::milliseconds(220), true).start();
+*/}
+
+
 
 
 void loop(int i) {
@@ -184,6 +200,9 @@ namespace AAA {
         }
     };
 }
+
+
+
 
 //DECLARE_CALL(B_Call1, AAA::B, foo, int, float)
 //DECLARE_CALL(B_Call2, AAA::B, foo, int)
