@@ -76,21 +76,21 @@ namespace itc {
         void EventLoop::bringNextToFront() 
         {
             std::unique_lock<std::mutex> lock(mMutex);
-            if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront" << std::endl;
+            if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront" << std::endl;           
 
             if (mTimers.size() > 1) {
                 auto frontTimer = mTimers.begin();
                 auto nextTimer = std::min_element(mTimers.begin(), mTimers.end(), 
                     []( const Timer &a, const Timer &b )
                     {
-                        return a.isStarted() && a.getStartedTime() + a.getPeriod() < b.getStartedTime() + b.getPeriod();
+                        return a.isStarted() && ((a.getStartedTime() + a.getPeriod() < b.getStartedTime() + b.getPeriod()) || !b.isStarted());
                     });
 
-                if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+                if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << " " << mTimers.begin()->isStarted() << std::endl;
                 if (nextTimer != mTimers.begin()) {
                     mTimers.splice(mTimers.begin(), mTimers, nextTimer, std::next(nextTimer));
                 }
-                if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << std::endl;
+                if (LOG_ENABLE) std::cout << "EventLoop::bringNextToFront " << frontTimer->getId() << " " << nextTimer->getId() << " " << mTimers.begin()->getId() << " " << mTimers.begin()->isStarted() << std::endl;
             }
 
             mCV.notify_one();

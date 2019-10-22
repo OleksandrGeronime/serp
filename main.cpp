@@ -6,14 +6,13 @@
 #include <string>
 #include <tuple>
 
+#include "demo/CallStaticDemo.h"
+#include "demo/CallDemo.h"
+#include "demo/RequestDemo.h"
+#include "demo/TimerDemo.h"
+
 static const std::string THREAD_1 = "bgThread1";
 static const std::string THREAD_2 = "bgThread2";
-
-static std::chrono::system_clock::time_point gAppStartTime = std::chrono::system_clock::now();
-
-long long getTimeFromStart() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - gAppStartTime).count();
-}
 
 struct A{
     std::string str;
@@ -65,7 +64,7 @@ struct Service1 {
         static int counter = 0;
         counter++;
         //if (!(counter % 100)) 
-        std::cout << itc::currentThreadName() << ": " << "timer " << itc::getLastTimerId() << " " << getTimeFromStart() << std::endl;
+        std::cout << itc::currentThreadName() << ": " << "timer " << itc::getLastTimerId() << " " << itc::getTimeFromStart() << std::endl;
     }
 
     int onRequestSum(int a, int b) {
@@ -134,7 +133,7 @@ void Service2::onResponseSum(int sum) {
 
 void Service1::startTimers() {
     std::cout << itc::currentThreadName() << ": " << "Service1::startTimers" << std::endl;
-    
+
     auto& t = itc::timer(Service1_timerEvent::Call(this), std::chrono::seconds(1), true);
     t.start();
     //itc::timer(Service1_timerEvent::Call(this), std::chrono::seconds(1), true).start();
@@ -230,13 +229,25 @@ int main()
 
     AAA::B b;
 
+    CallStaticDemo callStaticDemo;
+    callStaticDemo.run();
+
+    CallDemo callDemo;
+    //callDemo.run();
+
+    RequestDemo requestDemo;
+    //requestDemo.run();
+
+    TimerDemo timerDemo;
+    //timerDemo.run();
+
 //    itc::invoke(THREAD_1, new B_Call1::Call(&b, B_Call1::foo, 6, 3.4f));
 //    itc::invoke(THREAD_1, new B_Call2::Call(&b, B_Call2::foo, 4));
 
-    itc::invoke(B_foo2::Call(&b, B_foo2::Params(8, 3.5f)));
-    itc::invoke(B_foo1::Call(&b, B_foo1::Params(3)));
+ //   itc::invoke(B_foo2::Call(&b, B_foo2::Params(8, 3.5f)));
+ //   itc::invoke(B_foo1::Call(&b, B_foo1::Params(3)));
 
-    itc::invoke(Service1_startTimers::Call(&service1));
+ //   itc::invoke(Service1_startTimers::Call(&service1));
 
 /*    itc::invoke(THREAD_1, new itc::CallStatic<int>(func, 5));
 
