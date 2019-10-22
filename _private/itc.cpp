@@ -23,6 +23,11 @@ namespace itc {
         _private::Dispatcher::getInstance()->registerThread(thread);
     }
 
+    bool invoke(const itc::_private::CallBinder& callBinder)
+    {
+        return invoke(callBinder.getThreadName(), callBinder.getCallable());
+    }
+
     bool invoke(const std::string& threadName, const _private::ICallable* call) {
         bool result = false;
 
@@ -56,7 +61,9 @@ namespace itc {
         return _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->getLastTimerId();
     }
 
+    const static std::string MAIN_THREAD_NAME = "_main_";
     const std::string& currentThreadName() {
-        return _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->getThreadName();
+        _private::EventLoop* pThread = _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id());
+        return pThread ? pThread->getThreadName() : MAIN_THREAD_NAME;
     }
 }
