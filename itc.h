@@ -38,7 +38,7 @@ namespace CONNECTOR { \
     { \
     public: \
         Request(CLASS_REQUEST* contextRequest, Params params, CLASS_RESPONSE* contextResponse) \
-            : CallBinder(THREAD_1, new itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>(contextRequest, contextResponse, onRequestSum, onResponseSum, params)) \
+            : CallBinder(THREAD, new itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>(contextRequest, contextResponse, onRequestSum, onResponseSum, params)) \
             { \
                 std::cout << itc::currentThreadName() << " ---REQUEST---> " << THREAD << ": " \
                 << #CLASS_REQUEST << "::" << #METHOD_REQUEST << params << " RESP -> " << #CLASS_RESPONSE << "::" << #METHOD_RESPONSE << std::endl; \
@@ -54,6 +54,9 @@ namespace CONNECTOR { \
 // }
 
 namespace itc {
+    static std::chrono::system_clock::time_point gAppStartTime = std::chrono::system_clock::now();
+    long long getTimeFromStart();
+
     void createEventLoop(const std::string& threadName);
     bool invoke(const itc::_private::CallBinder& callBinder);
     bool invoke(const std::string& threadName, const _private::ICallable* call);

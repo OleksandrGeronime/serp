@@ -17,6 +17,10 @@
 
 namespace itc {
 
+    long long getTimeFromStart() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - gAppStartTime).count();
+    }
+
     void createEventLoop(const std::string& threadName) {
         _private::EventLoop* thread = new _private::EventLoop(threadName);
         thread->createThread();
