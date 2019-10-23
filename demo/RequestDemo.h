@@ -19,8 +19,8 @@
 #include "../itc.h"
 
 namespace ns_RequestDemo {
-    static const std::string THREAD_PBUP = "thread_PBUP";
-    static const std::string THREAD_DB = "thread_DB";
+    static const std::string THREAD_PBUP = "RequestDemo_thread_PBUP";
+    static const std::string THREAD_DB = "RequestDemo_thread_DB";
 
     class DB 
     {

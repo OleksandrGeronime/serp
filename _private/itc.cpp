@@ -17,21 +17,6 @@
 
 namespace itc {
 
-    long long getTimeFromStart() {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - gAppStartTime).count();
-    }
-
-    void createEventLoop(const std::string& threadName) {
-        _private::EventLoop* thread = new _private::EventLoop(threadName);
-        thread->createThread();
-        _private::Dispatcher::getInstance()->registerThread(thread);
-    }
-
-    bool invoke(const itc::_private::CallBinder& callBinder)
-    {
-        return invoke(callBinder.getThreadName(), callBinder.getCallable());
-    }
-
     bool invoke(const std::string& threadName, const _private::ICallable* call) {
         bool result = false;
 
@@ -48,16 +33,31 @@ namespace itc {
         return result; 
     }
 
-    Timer& timer(const itc::_private::CallBinder& callBinder, std::chrono::milliseconds period, bool repeating) {
-        return createTimer(callBinder.getThreadName(), callBinder.getCallable(), period, repeating);
-    }
-
-    Timer& createTimer(const std::string& threadName, const _private::ICallable* call, 
+    Timer& timer(const std::string& threadName, const _private::ICallable* call, 
         std::chrono::milliseconds period, bool repeating) {
 
         _private::EventLoop* thread = _private::Dispatcher::getInstance()->getThreadByName(threadName);
         return thread->addTimer(call, period, repeating);
     }
+
+    long long getTimeFromStart() {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - gAppStartTime).count();
+    }
+
+    void createEventLoop(const std::string& threadName) {
+        _private::EventLoop* thread = new _private::EventLoop(threadName);
+        thread->createThread();
+        _private::Dispatcher::getInstance()->registerThread(thread);
+    }
+
+    bool invoke(const itc::_private::CallBinder& callBinder)
+    {
+        return invoke(callBinder.getThreadName(), callBinder.getCallable());
+    }
+
+    Timer& timer(const itc::_private::CallBinder& callBinder, std::chrono::milliseconds period, bool repeating) {
+        return timer(callBinder.getThreadName(), callBinder.getCallable(), period, repeating);
+    }    
 
     void deleteTimer(const std::string& threadName, const Timer& timer) {
         
@@ -69,7 +69,7 @@ namespace itc {
         return _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->getLastTimerId();
     }
 
-    const static std::string MAIN_THREAD_NAME = "_main_";
+    const static std::string MAIN_THREAD_NAME = "_UNKNOWN_";
     const std::string& currentThreadName() {
         _private::EventLoop* pThread = _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id());
         return pThread ? pThread->getThreadName() : MAIN_THREAD_NAME;

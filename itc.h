@@ -15,6 +15,19 @@
 #include "_private/CallBinder.h"
 #include <iostream>
 
+#define DECLARE_STATIC_CALL(CONNECTOR, THREAD, METHOD, ...) \
+namespace CONNECTOR { \
+    typedef std::tuple<__VA_ARGS__> Params; \
+    class CallStatic : public itc::_private::CallBinder { \
+        public: \
+        CallStatic(Params params = Params()) \
+        : CallBinder(THREAD, new itc::CallStatic<__VA_ARGS__>(METHOD, params)) \
+        { \
+            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #METHOD << params << std::endl; \
+        } \
+    }; \
+}
+
 #define DECLARE_CALL(CONNECTOR, THREAD, CLASS, METHOD, ...) \
 namespace CONNECTOR { \
     auto METHOD = std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)); \
@@ -27,7 +40,21 @@ namespace CONNECTOR { \
             std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #CLASS << "::" << #METHOD << params << std::endl; \
         } \
     }; \
-} 
+}
+
+#define DECLARE_EVENT(CONNECTOR, CLASS, METHOD, ...) \
+namespace CONNECTOR { \
+    auto METHOD = std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)); \
+    typedef std::tuple<__VA_ARGS__> Params; \
+    class Event : public itc::_private::CallBinder \
+    { \
+    public: \
+        Event(CLASS* context, Params params = Params()): CallBinder(itc::currentThreadName(), new itc::Call<CLASS, ## __VA_ARGS__>(context, METHOD, params)) \
+        { \
+            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #CLASS << "::" << #METHOD << params << std::endl; \
+        } \
+    }; \
+}
 
 #define DECLARE_REQUEST(CONNECTOR, THREAD, CLASS_RESPONSE, METHOD_RESPONSE, RET, CLASS_REQUEST, METHOD_REQUEST, ...) \
 namespace CONNECTOR { \
@@ -46,23 +73,13 @@ namespace CONNECTOR { \
     }; \
 }
 
-// #define DECLARE_REQUEST(CONNECTOR, CLASS_REQUEST, METHOD_REQUEST, CLASS_RESPONSE, METHOD_RESPONSE, TYPE_RESPONSE, ...) \
-// namespace CONNECTOR { \
-//     typedef itc::Request<CLASS_REQUEST, CLASS_RESPONSE, TYPE_RESPONSE, ##__VA_ARGS__> Request; \
-//     auto METHOD_REQUEST = std::mem_fn(static_cast<TYPE_RESPONSE (CLASS_REQUEST::*)(__VA_ARGS__)>(&CLASS_REQUEST::METHOD_REQUEST)); \
-//     auto METHOD_RESPONSE = std::mem_fn(static_cast<void (CLASS_RESPONSE::*)(TYPE_RESPONSE)>(&CLASS_RESPONSE::METHOD_RESPONSE)); \
-// }
-
 namespace itc {
     static std::chrono::system_clock::time_point gAppStartTime = std::chrono::system_clock::now();
     long long getTimeFromStart();
 
     void createEventLoop(const std::string& threadName);
     bool invoke(const itc::_private::CallBinder& callBinder);
-    bool invoke(const std::string& threadName, const _private::ICallable* call);
     Timer& timer(const itc::_private::CallBinder& callBinder, std::chrono::milliseconds period, bool repeating);
-    Timer& createTimer(const std::string& threadName, const _private::ICallable* call, 
-        std::chrono::milliseconds period, bool repeating);
     void deleteTimer(const std::string& threadName, const Timer& timer);
     int getLastTimerId();
     const std::string& currentThreadName();
