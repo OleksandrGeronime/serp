@@ -230,10 +230,10 @@ int main()
     AAA::B b;
 
     CallStaticDemo callStaticDemo;
-    callStaticDemo.run();
+    //callStaticDemo.run();
 
     CallDemo callDemo;
-    //callDemo.run();
+    callDemo.run();
 
     RequestDemo requestDemo;
     //requestDemo.run();
