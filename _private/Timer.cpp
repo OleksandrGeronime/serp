@@ -44,12 +44,12 @@ namespace itc {
         _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->bringNextToFront();
 
         //std::cout << "Timer::start()" << std::endl;
-    };
+    }
 
     void Timer::stop() {
         //std::cout << "Timer::stop()" << std::endl;
         mbStarted = false; 
         _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->bringNextToFront();
-    };
+    }
 
 }

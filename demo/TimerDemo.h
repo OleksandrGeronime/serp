@@ -20,8 +20,8 @@
 #include "../itc.h"
 
 namespace ns_TimerDemo {
-    static const std::string THREAD_1 = "thread_1";
-    static const std::string THREAD_2 = "thread_2";
+    static const std::string THREAD_1 = "TimerDemo_thread_1";
+    static const std::string THREAD_2 = "TimerDemo_thread_2";
 
     class A1
     {
