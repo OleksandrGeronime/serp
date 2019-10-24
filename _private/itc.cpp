@@ -8,12 +8,12 @@
  *  @author Alexander Geronime
  */
 
-#include "../itc.h"
+#include "../itc.hpp"
 
 #include <iostream>
 
-#include "Dispatcher.h"
-#include "EventLoop.h"
+#include "Dispatcher.hpp"
+#include "EventLoop.hpp"
 
 namespace itc {
 

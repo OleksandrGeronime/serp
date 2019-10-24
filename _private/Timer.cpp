@@ -9,11 +9,11 @@
 
 #include <iostream>
 
-#include "ICallable.h"
-#include "Timer.h"
-#include "Event.h"
-#include "Dispatcher.h"
-#include "EventLoop.h"
+#include "ICallable.hpp"
+#include "Timer.hpp"
+#include "Event.hpp"
+#include "Dispatcher.hpp"
+#include "EventLoop.hpp"
 
 namespace itc {
 

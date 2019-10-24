@@ -16,7 +16,7 @@
 #include <chrono>
 #include <memory>
 
-#include "../itc.h"
+#include "../itc.hpp"
 
 namespace ns_CallDemo {
     static const std::string THREAD = "CallDemo_thread";

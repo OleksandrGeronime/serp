@@ -7,14 +7,14 @@
  *  @author Alexander Geronime
  */
 
-#include "EventLoop.h"
+#include "EventLoop.hpp"
 
 //#include <iostream>
 #include <algorithm>
 #include <chrono>
 
-#include "Event.h"
-#include "Call.h"
+#include "Event.hpp"
+#include "Call.hpp"
 
 static const int LOG_ENABLE = 0;
 

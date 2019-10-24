@@ -19,6 +19,6 @@ echo ${PKG_CONFIG_PATH}
 rm -rf bin
 rm -rf build_host
 mkdir build_host && cd build_host
-cmake -DCMAKE_CXX_FLAGS="-I${HIMAWARI_HOST_SDK}/include ${CXXFLAGS}" -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" -DCMAKE_FIND_ROOT_PATH="${HIMAWARI_HOST_SDK}/lib;${HIMAWARI_HOST_SDK}/lib/cmake;common-api/bin" .. && make
+cmake -DCMAKE_CXX_FLAGS="-I${HIMAWARI_HOST_SDK}/include ${CXXFLAGS}" -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}" -DCMAKE_FIND_ROOT_PATH="${HIMAWARI_HOST_SDK}/lib;${HIMAWARI_HOST_SDK}/lib/cmake;common-api/bin" -DBUILD_DIRECTORY="build_host" .. && make
 
 set +e

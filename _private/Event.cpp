@@ -7,8 +7,8 @@
  *  @author Alexander Geronime
  */
 
-#include "Event.h"
-#include "ICallable.h"
+#include "Event.hpp"
+#include "ICallable.hpp"
 
 namespace itc {
     namespace _private {
