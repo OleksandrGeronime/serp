@@ -1,9 +1,10 @@
 /** @file RequestDemo.h
  *  @brief Demo request functionality
- * 
+ *
+ *  Reuqest could be used to call member funciton in another thread and receive function result value in another member function in invoker thread. 
  *  There are two threads. In one thread works PBUP. In another - DB.
  *  From RequestDemo::run() made call to PBUP to start process.
- *  Next PBUM makes request to DB and provides this as consumer.
+ *  Next PBUM makes request to DB and provides "this" as consumer.
  *  DB receive request, process it and when result will be ready it will be returned in PBUP.
  *
  *  @date 2019
@@ -19,7 +20,7 @@
 #include "../itc.h"
 
 namespace ns_RequestDemo {
-    static const std::string THREAD_PBUP = "RequestDemo_thread_PBUP";
+    static const std::string THREAD_PBAP = "RequestDemo_thread_PBAP";
     static const std::string THREAD_DB = "RequestDemo_thread_DB";
 
     class DB 
@@ -35,23 +36,23 @@ namespace ns_RequestDemo {
         };
     };
 
-    class PBUP
+    class PBAP
     {
     public:
         void request();
 
         void onExecuteResponse(int result) {
-            std::cout << itc::currentThreadName() << ": " << "PBUP::onExecuteResponse(" << result << ")" << std::endl;
+            std::cout << itc::currentThreadName() << ": " << "PBAP::onExecuteResponse(" << result << ")" << std::endl;
         }
 
         DB db;
     };
 }
 
-DECLARE_CALL(CALL_request, ns_RequestDemo::THREAD_PBUP, ns_RequestDemo::PBUP, request)
-DECLARE_REQUEST(REQUEST_execute, ns_RequestDemo::THREAD_DB, ns_RequestDemo::PBUP, onExecuteResponse, int, ns_RequestDemo::DB, execute, std::string)
+DECLARE_CALL(CALL_request, ns_RequestDemo::THREAD_PBAP, ns_RequestDemo::PBAP, request)
+DECLARE_REQUEST(REQUEST_execute, ns_RequestDemo::THREAD_DB, ns_RequestDemo::PBAP, onExecuteResponse, int, ns_RequestDemo::DB, execute, std::string)
 
-void ns_RequestDemo::PBUP::request()
+void ns_RequestDemo::PBAP::request()
 {
     itc::invoke(REQUEST_execute::Request(&db, REQUEST_execute::Params("SELECT * FROM DUAL;"), this));
 }
@@ -65,9 +66,9 @@ public:
 void RequestDemo::run() 
 {
     itc::createEventLoop(ns_RequestDemo::THREAD_DB);
-    itc::createEventLoop(ns_RequestDemo::THREAD_PBUP);
+    itc::createEventLoop(ns_RequestDemo::THREAD_PBAP);
 
-    ns_RequestDemo::PBUP pbup;
+    ns_RequestDemo::PBAP pbap;
 
-    itc::invoke(CALL_request::Call(&pbup));
+    itc::invoke(CALL_request::Call(&pbap));
 }

@@ -7,11 +7,10 @@
  *  @author Alexander Geronime 
  */
 
-#include "../Timer.h"
-
 #include <iostream>
 
 #include "ICallable.h"
+#include "Timer.h"
 #include "Event.h"
 #include "Dispatcher.h"
 #include "EventLoop.h"

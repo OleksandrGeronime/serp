@@ -1,11 +1,13 @@
 /** @file TimerDemo.h
  *  @brief Demo timer functionality
- * 
- *  There are two threds in this sample
- *  In first thread one timers started repeateadly and elapse each 3 seconds.
- *  In second thread 2 timers started for 500ms and 2s repeateadly. 
+ *  
+ *  Timer could invoke event on the thread where it created and call specified method after specified period of time.
+ *  Timer could be repeatable and started/stopped any time.
+ *  There are two threads in this sample. Both of them started in TimerDemo::run() and calls to start invoked to each.
+ *  In first thread one timer is started repeatedly and elapses each 3 seconds.
+ *  In second thread 2 timers are started for 500ms and 2s repeatedly. 
  *  Both of them call the same method. Which timer made call could be defined using itc::getLastTimerId()
- *  First will be stopped after 5 elapsing, second - after 6.
+ *  First will be stopped after 5 operations, second - after 6.
  *  
  *  @date 2019
  *  @author Alexander Geronime 
@@ -42,14 +44,14 @@ namespace ns_TimerDemo {
 }
 
 DECLARE_CALL(CALL_A1_startTimer, ns_TimerDemo::THREAD_1, ns_TimerDemo::A1, startTimer)
-DECLARE_CALL(CALL_A1_onTimerEvent, ns_TimerDemo::THREAD_1, ns_TimerDemo::A1, onTimerEvent)
+DECLARE_EVENT(EVENT_A1_onTimer, ns_TimerDemo::A1, onTimerEvent)
 DECLARE_CALL(CALL_A2_startTimer, ns_TimerDemo::THREAD_2, ns_TimerDemo::A2, startTimer)
-DECLARE_CALL(CALL_A2_onTimerEvent, ns_TimerDemo::THREAD_2, ns_TimerDemo::A2, onTimerEvent)
+DECLARE_EVENT(EVENT_A2_onTimer, ns_TimerDemo::A2, onTimerEvent)
 
 void ns_TimerDemo::A1::startTimer()
 {
     std::cout << itc::currentThreadName() << ": " << "A1::startTimer()" << std::endl;
-    auto& t =  itc::timer(CALL_A1_onTimerEvent::Call(this), std::chrono::seconds(3), true);
+    auto& t =  itc::timer(EVENT_A1_onTimer::Event(this), std::chrono::seconds(3), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A1::startTimer() t timerId=" << t.getId() << std::endl;
     t.start();
 }
@@ -61,11 +63,11 @@ void ns_TimerDemo::A2::startTimer()
 {
     std::cout << itc::currentThreadName() << ": " << "A1::startTimer()" << std::endl;
     
-    mpT1 = &itc::timer(CALL_A2_onTimerEvent::Call(this), std::chrono::milliseconds(500), true);
+    mpT1 = &itc::timer(EVENT_A2_onTimer::Event(this), std::chrono::milliseconds(500), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A2::startTimer() mpT1 timerId=" << mpT1->getId() << std::endl;
     mpT1->start();
     
-    mpT2 = &itc::timer(CALL_A2_onTimerEvent::Call(this), std::chrono::seconds(1), true);
+    mpT2 = &itc::timer(EVENT_A2_onTimer::Event(this), std::chrono::seconds(1), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A2::startTimer() mpT2 timerId=" << mpT2->getId() << std::endl;
     mpT2->start();
 }

@@ -1,6 +1,10 @@
 /** @file CallStaticDemo.h
  *  @brief Demo static call functionality
  *
+ *  StaticCall could be assigned to any global or static function and invoked in different thread. 
+ *  In this demo one thread created and 4 different calls made from main to this thread.
+ *  Each call execute functions: 2 global function and 2 static functions with dfferent arguments lists.
+ *  
  *  @date 2019
  *  @author Alexander Geronime 
  */
@@ -31,20 +35,23 @@ namespace ns_CallStaticDemo {
     void func1() {
         // wait a little to syncronize outputs
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
-        std::cout << itc::currentThreadName() << ": " << "func1()" << std::endl;
+        std::cout << itc::currentThreadName() << ": func1()" << std::endl;
     }
 
     void func2(int i){ 
-        std::cout << itc::currentThreadName() << ": " << "func2(" << i << ")" << std::endl; 
+        std::cout << itc::currentThreadName() << ": func2(" << i << ")" << std::endl; 
     }
 
-    void func3(std::string s, int i, float f) { 
-        std::cout << itc::currentThreadName() << ": " << "func3(" << s << ", " << i << ", " << f << ")" << std::endl;
-    }
-    
-    void func4(std::shared_ptr<A> a) {
-        std::cout << itc::currentThreadName() << ": " << "func4(" << a << ")" << std::endl;
-    }
+    class SomeClass {
+    public:
+        static void func3(std::string s, int i, float f) { 
+            std::cout << itc::currentThreadName() << ": SomeClass::func3(" << s << ", " << i << ", " << f << ")" << std::endl;
+        }
+
+        static void func4(std::shared_ptr<A> a) {
+            std::cout << itc::currentThreadName() << ": SomeClass::func4(" << a << ")" << std::endl;
+        }
+    };
 }
 
 class CallStaticDemo
@@ -56,8 +63,8 @@ public:
 
 DECLARE_STATIC_CALL (STATIC_CALL_func1, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::func1)
 DECLARE_STATIC_CALL (STATIC_CALL_func2, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::func2, int)
-DECLARE_STATIC_CALL (STATIC_CALL_func3, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::func3, std::string, int, float)
-DECLARE_STATIC_CALL (STATIC_CALL_func4, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::func4, std::shared_ptr<ns_CallStaticDemo::A>)
+DECLARE_STATIC_CALL (STATIC_CALL_func3, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::SomeClass::func3, std::string, int, float)
+DECLARE_STATIC_CALL (STATIC_CALL_func4, ns_CallStaticDemo::THREAD, ns_CallStaticDemo::SomeClass::func4, std::shared_ptr<ns_CallStaticDemo::A>)
 
 void CallStaticDemo::run()
 {

@@ -1,9 +1,10 @@
 /** @file EventDemo.h
  *  @brief Demo event functionality
  *  
- *  Event it is a async call to to same thread where it was sent.
- *  In this demo thread created and sent call ns_EventDemo::startEventDemo() from main thread to initiate demo. 
- *  You can't create event in main thread.
+ *  Event could be assigned to any public memember function and invoked in the same thread where it was ivoked.
+ *  It could be used to break synchronius sequence with async call.
+ *  In this demo thread created and invoked call ns_EventDemo::startEventDemo() from main thread to initiate demo. 
+ *  You can't create event in main threadm because it not registered in threads dispathcher.
  *  After demo started thread invoke 4 different events. Events called asyncroniusly in the same thread.
  * 
  *  @date 2019

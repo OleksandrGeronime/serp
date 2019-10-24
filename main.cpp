@@ -16,11 +16,11 @@ int main()
     TimerDemo timerDemo;
     
     // Uncoment demos by one for better log output, otherwise log outputs from different threads could be mixed
-    callStaticDemo.run();   
+    //callStaticDemo.run();   
     //callDemo.run();
     //eventDemo.run();
     //requestDemo.run();
-    //timerDemo.run();
+    timerDemo.run();
 
     while(true) {              
         std::this_thread::sleep_for(std::chrono::hours(1));
