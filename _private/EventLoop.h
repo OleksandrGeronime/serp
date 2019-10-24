@@ -16,7 +16,7 @@
 #include <queue>
 #include <list>
 
-#include "../Timer.h"
+#include "Timer.h"
 
 namespace itc {
     namespace _private {

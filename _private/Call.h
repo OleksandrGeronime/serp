@@ -9,13 +9,12 @@
 
 #pragma once
 
-#include "itc.h"
+#include <iostream>
 
-#include "iostream"
-
-#include "_private/tuple_utils.h"
-#include "_private/ICallable.h"
-#include "_private/CallBinder.h"
+#include "../itc.h"
+#include "tuple_utils.h"
+#include "ICallable.h"
+#include "CallBinder.h"
 
 namespace itc {
 

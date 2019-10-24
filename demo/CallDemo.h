@@ -1,6 +1,10 @@
 /** @file CallDemo.h
  *  @brief Demo call functionality
  *
+ *  Call could be assigned to any public memember function and invoked in different thread. 
+ *  In this demo one thread created and 4 different calls made from main to this thread.
+ *  Each call execute one of 4 member functions with dfferent arguments lists.
+ * 
  *  @date 2019
  *  @author Alexander Geronime 
  */
