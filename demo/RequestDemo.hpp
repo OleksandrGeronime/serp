@@ -17,7 +17,7 @@
 #include <string>
 #include <chrono>
 
-#include "../itc.h"
+#include "../itc.hpp"
 
 namespace ns_RequestDemo {
     static const std::string THREAD_PBAP = "RequestDemo_thread_PBAP";

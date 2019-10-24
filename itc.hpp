@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "_private/Call.h"
-#include "_private/Timer.h"
-#include "_private/CallBinder.h"
+#include "_private/Call.hpp"
+#include "_private/Timer.hpp"
+#include "_private/CallBinder.hpp"
 
 // Declares global alias for global or static function which could be called on specified thread from any thread in application
 // * CONNECTOR - allias for call, should be UNIQUE for all application

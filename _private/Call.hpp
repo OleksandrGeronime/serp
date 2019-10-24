@@ -11,10 +11,10 @@
 
 #include <iostream>
 
-#include "../itc.h"
-#include "tuple_utils.h"
-#include "ICallable.h"
-#include "CallBinder.h"
+#include "../itc.hpp"
+#include "tuple_utils.hpp"
+#include "ICallable.hpp"
+#include "CallBinder.hpp"
 
 namespace itc {
 

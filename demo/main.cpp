@@ -1,11 +1,11 @@
 #include <thread>
 #include <chrono>
 
-#include "demo/CallStaticDemo.h"
-#include "demo/CallDemo.h"
-#include "demo/EventDemo.h"
-#include "demo/RequestDemo.h"
-#include "demo/TimerDemo.h"
+#include "CallStaticDemo.hpp"
+#include "CallDemo.hpp"
+#include "EventDemo.hpp"
+#include "RequestDemo.hpp"
+#include "TimerDemo.hpp"
 
 int main()
 {

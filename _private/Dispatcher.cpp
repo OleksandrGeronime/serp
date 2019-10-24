@@ -7,12 +7,13 @@
  *  @author Alexander Geronime
  */
 
-#include "Dispatcher.h"
+#include "Dispatcher.hpp"
+
 #include <iostream>
 #include <algorithm>
 #include <thread>
 
-#include "EventLoop.h"
+#include "EventLoop.hpp"
 
 namespace itc {
     namespace _private {

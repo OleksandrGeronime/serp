@@ -19,7 +19,7 @@
 #include <string>
 #include <chrono>
 
-#include "../itc.h"
+#include "../itc.hpp"
 
 namespace ns_TimerDemo {
     static const std::string THREAD_1 = "TimerDemo_thread_1";
