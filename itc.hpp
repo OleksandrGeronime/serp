@@ -13,6 +13,11 @@
 #include "_private/Call.hpp"
 #include "_private/Timer.hpp"
 #include "_private/CallBinder.hpp"
+#include "_private/Logger.hpp"
+
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 // Declares global alias for global or static function which could be called on specified thread from any thread in application
 // * CONNECTOR - allias for call, should be UNIQUE for all application
@@ -21,16 +26,18 @@
 // * ... funciton argument types
 #define DECLARE_STATIC_CALL(CONNECTOR, THREAD, METHOD, ...) \
 namespace CONNECTOR { \
-    typedef std::tuple<__VA_ARGS__> Params; \
-    class CallStatic : public itc::_private::CallBinder { \
-        public: \
-        CallStatic(Params params = Params()) \
-        : CallBinder(THREAD, new itc::CallStatic<__VA_ARGS__>(METHOD, params)) \
+    template<typename... Args> \
+    class TCallStatic : public itc::_private::CallBinder { \
+    public: \
+        TCallStatic(Args... args) \
+        : CallBinder(THREAD, new itc::CallStatic<Args...>(METHOD, std::make_tuple(args...))) \
         { \
-            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #METHOD << params << std::endl; \
+            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #METHOD; \
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
         } \
     }; \
-}
+    typedef TCallStatic<__VA_ARGS__> CallStatic; \
+} 
 
 // Declares global alias for member function which could be called on specified thread from any thread in application
 // * CONNECTOR - allias for call, should be UNIQUE for all application
@@ -97,6 +104,8 @@ namespace CONNECTOR { \
             } \
     }; \
 }
+
+#pragma GCC diagnostic pop
 
 namespace itc {
     // Global variable storing time point of application start
