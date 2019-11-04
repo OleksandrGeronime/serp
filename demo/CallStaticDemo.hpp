@@ -71,7 +71,7 @@ void CallStaticDemo::run()
     itc::createEventLoop(ns_CallStaticDemo::THREAD);
 
     itc::invoke(STATIC_CALL_func1::CallStatic());
-    itc::invoke(STATIC_CALL_func2::CallStatic(STATIC_CALL_func2::Params(5)));
-    itc::invoke(STATIC_CALL_func3::CallStatic(STATIC_CALL_func3::Params("HELLO", 42, 5.5f)));
-    itc::invoke(STATIC_CALL_func4::CallStatic(STATIC_CALL_func4::Params(std::make_shared<ns_CallStaticDemo::A>(33, "Hello A"))));
+    itc::invoke(STATIC_CALL_func2::CallStatic(5));
+    itc::invoke(STATIC_CALL_func3::CallStatic("HELLO", 42, 5.5f));
+    itc::invoke(STATIC_CALL_func4::CallStatic(std::make_shared<ns_CallStaticDemo::A>(33, "Hello A")));
 }

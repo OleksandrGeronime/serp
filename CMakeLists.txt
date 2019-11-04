@@ -33,6 +33,7 @@ set(SRC_FILES
     _private/EventLoop.cpp
     _private/itc.cpp
     _private/Timer.cpp
+    _private/Logger.cpp
 )
 
 # Make .so
