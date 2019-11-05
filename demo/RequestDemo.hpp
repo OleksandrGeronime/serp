@@ -54,7 +54,7 @@ DECLARE_REQUEST(REQUEST_execute, ns_RequestDemo::THREAD_DB, ns_RequestDemo::PBAP
 
 void ns_RequestDemo::PBAP::request()
 {
-    itc::invoke(REQUEST_execute::Request(&db, REQUEST_execute::Params("SELECT * FROM DUAL;"), this));
+    itc::invoke(REQUEST_execute::Request(&db, this, "SELECT * FROM DUAL;"));
 }
 
 class RequestDemo

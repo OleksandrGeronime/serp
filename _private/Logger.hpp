@@ -21,7 +21,7 @@ namespace itc {
             out << "(" << std::forward<Head>(head);
             using expander = int[];
             (void)expander{0, (void(out << ", " << std::forward<Tail>(tail)), 0)...};
-            out << ")" << std::endl;
+            out << ")";
         }
 
         void logArgs(std::ostream& out);
