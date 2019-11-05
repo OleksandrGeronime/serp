@@ -70,9 +70,9 @@ namespace ns_EventDemo {
         ns_EventDemo::EventConsumer consumer;
 
         itc::invoke(EVENT_func1::Event(&consumer));
-        itc::invoke(EVENT_func2::Event(&consumer, EVENT_func2::Params(5)));
-        itc::invoke(EVENT_func3::Event(&consumer, EVENT_func3::Params("HELLO", 42, 5.5f)));
-        itc::invoke(EVENT_func4::Event(&consumer, EVENT_func4::Params(std::make_shared<ns_EventDemo::A>(33, "Hello A"))));
+        itc::invoke(EVENT_func2::Event(&consumer, 5));
+        itc::invoke(EVENT_func3::Event(&consumer, "HELLO", 42, 5.5f));
+        itc::invoke(EVENT_func4::Event(&consumer, std::make_shared<ns_EventDemo::A>(33, "Hello A")));
     }
 }
 

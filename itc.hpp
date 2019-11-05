@@ -34,6 +34,7 @@ namespace CONNECTOR { \
         { \
             std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #METHOD; \
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+            std::cout << std::endl; \
         } \
     }; \
     typedef TCallStatic<__VA_ARGS__> CallStatic; \
@@ -47,16 +48,43 @@ namespace CONNECTOR { \
 // * ... funciton argument types
 #define DECLARE_CALL(CONNECTOR, THREAD, CLASS, METHOD, ...) \
 namespace CONNECTOR { \
-    auto METHOD = std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)); \
-    typedef std::tuple<__VA_ARGS__> Params; \
-    class Call : public itc::_private::CallBinder \
+    template<typename... Args> \
+    class TCall : public itc::_private::CallBinder \
     { \
     public: \
-        Call(CLASS* context, Params params = Params()): CallBinder(THREAD, new itc::Call<CLASS, ## __VA_ARGS__>(context, METHOD, params)) \
+        TCall<Args...>(CLASS* context, Args... args) \
+        : CallBinder(THREAD, new itc::Call<CLASS, ## __VA_ARGS__>(context \
+            , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
+            , std::make_tuple(args...))) \
         { \
-            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #CLASS << "::" << #METHOD << params << std::endl; \
+            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #CLASS << "::" << #METHOD; \
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+            std::cout << std::endl; \
         } \
     }; \
+    typedef TCall<__VA_ARGS__> Call; \
+}
+
+// Declares global alias for member function which will be called thread where it invoked asynchronously
+// * CONNECTOR - allias for event, should be UNIQUE for all application
+// * CLASS - full name of class where function declared with namespaces and class names
+// * METHOD - name of funciton without namespaces and class names, funcition shold be public and return void
+// * ... funciton argument types
+#define DECLARE_STATIC_EVENT(CONNECTOR, METHOD, ...) \
+namespace CONNECTOR { \
+    template<typename... Args> \
+    class TEvent : public itc::_private::CallBinder \
+    { \
+    public: \
+        TEvent<Args...>(Args... args) \
+        : CallBinder(itc::currentThreadName(), new itc::CallStatic<__VA_ARGS__>(METHOD, std::make_tuple(args...))) \
+        { \
+            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #METHOD; \
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+            std::cout << std::endl; \
+        } \
+    }; \
+    typedef TEvent<__VA_ARGS__> Event; \
 }
 
 // Declares global alias for member function which will be called thread where it invoked asynchronously
@@ -66,16 +94,21 @@ namespace CONNECTOR { \
 // * ... funciton argument types
 #define DECLARE_EVENT(CONNECTOR, CLASS, METHOD, ...) \
 namespace CONNECTOR { \
-    auto METHOD = std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)); \
-    typedef std::tuple<__VA_ARGS__> Params; \
-    class Event : public itc::_private::CallBinder \
+    template<typename... Args> \
+    class TEvent : public itc::_private::CallBinder \
     { \
     public: \
-        Event(CLASS* context, Params params = Params()): CallBinder(itc::currentThreadName(), new itc::Call<CLASS, ## __VA_ARGS__>(context, METHOD, params)) \
+        TEvent<Args...>(CLASS* context, Args... args) \
+        : CallBinder(itc::currentThreadName(), new itc::Call<CLASS, ## __VA_ARGS__>(context \
+            , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
+            , std::make_tuple(args...))) \
         { \
-            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #CLASS << "::" << #METHOD << params << std::endl; \
+            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #CLASS << "::" << #METHOD; \
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+            std::cout << std::endl; \
         } \
     }; \
+    typedef TEvent<__VA_ARGS__> Event; \
 }
 
 // Declares global alias for request which could be sent to member function in specified thread and result value of this funciton
@@ -90,19 +123,23 @@ namespace CONNECTOR { \
 // * ... METHOD_REQUEST argument types
 #define DECLARE_REQUEST(CONNECTOR, THREAD, CLASS_RESPONSE, METHOD_RESPONSE, RET, CLASS_REQUEST, METHOD_REQUEST, ...) \
 namespace CONNECTOR { \
-    auto onRequestSum = std::mem_fn(static_cast<RET (CLASS_REQUEST::*)(__VA_ARGS__)>(&CLASS_REQUEST::METHOD_REQUEST)); \
-    auto onResponseSum = std::mem_fn(static_cast<void (CLASS_RESPONSE::*)(RET)>(&CLASS_RESPONSE::METHOD_RESPONSE)); \
-    typedef std::tuple<__VA_ARGS__> Params; \
-    class Request : public itc::_private::CallBinder \
+    template<typename... Args> \
+    class TRequest : public itc::_private::CallBinder \
     { \
     public: \
-        Request(CLASS_REQUEST* contextRequest, Params params, CLASS_RESPONSE* contextResponse) \
-            : CallBinder(THREAD, new itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>(contextRequest, contextResponse, onRequestSum, onResponseSum, params)) \
+        TRequest<Args...>(CLASS_REQUEST* contextRequest, CLASS_RESPONSE* contextResponse, Args... args) \
+            : CallBinder(THREAD, new itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>(contextRequest \
+            , contextResponse \
+            , std::mem_fn(static_cast<RET (CLASS_REQUEST::*)(__VA_ARGS__)>(&CLASS_REQUEST::METHOD_REQUEST)) \
+            , std::mem_fn(static_cast<void (CLASS_RESPONSE::*)(RET)>(&CLASS_RESPONSE::METHOD_RESPONSE)) \
+            , std::make_tuple(args...))) \
             { \
-                std::cout << itc::currentThreadName() << " ---REQUEST---> " << THREAD << ": " \
-                << #CLASS_REQUEST << "::" << #METHOD_REQUEST << params << " RESP -> " << #CLASS_RESPONSE << "::" << #METHOD_RESPONSE << std::endl; \
+                std::cout << itc::currentThreadName() << " ---REQUEST---> " << THREAD << ": " << #CLASS_REQUEST << "::" << #METHOD_REQUEST; \
+                itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+                std::cout << " RESP -> " << #CLASS_RESPONSE << "::" << #METHOD_RESPONSE << std::endl; \
             } \
     }; \
+    typedef TRequest<__VA_ARGS__> Request; \
 }
 
 #pragma GCC diagnostic pop

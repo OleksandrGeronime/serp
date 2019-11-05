@@ -76,7 +76,7 @@ void CallDemo::run()
     auto a = std::make_shared<ns_CallDemo::A>(123, "HELLO A");
 
     itc::invoke(CALL_func1::Call(a.get()));
-    itc::invoke(CALL_func2::Call(a.get(), CALL_func2::Params(42)));
-    itc::invoke(CALL_func3::Call(a.get(), CALL_func3::Params("Demo", 5, 3.14f)));
-    itc::invoke(CALL_func4::Call(a.get(), CALL_func4::Params(a)));
+    itc::invoke(CALL_func2::Call(a.get(), 42));
+    itc::invoke(CALL_func3::Call(a.get(), "Demo", 5, 3.14f));
+    itc::invoke(CALL_func4::Call(a.get(), a));
 }
