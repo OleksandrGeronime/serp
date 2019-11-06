@@ -10,20 +10,20 @@
 
 int main()
 {
-    CallStaticDemo callStaticDemo;
-    CallDemo callDemo;
+    // CallStaticDemo callStaticDemo;
+    // CallDemo callDemo;
     EventStaticDemo eventStaticDemo;
-    EventDemo eventDemo;
-    RequestDemo requestDemo;
-    TimerDemo timerDemo;
+    // EventDemo eventDemo;
+    // RequestDemo requestDemo;
+    // TimerDemo timerDemo;
     
     // Uncoment demos by one for better log output, otherwise log outputs from different threads could be mixed
     // callStaticDemo.run();   
     // callDemo.run();
-    // eventStaticDemo.run();
+    eventStaticDemo.run();
     // eventDemo.run();
     // requestDemo.run();
-    timerDemo.run();
+    // timerDemo.run();
 
     while(true) {              
         std::this_thread::sleep_for(std::chrono::hours(1));

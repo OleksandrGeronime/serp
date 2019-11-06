@@ -1,7 +1,7 @@
 /** @file EventDemo.h
  *  @brief Demo event functionality
  *  
- *  Event could be assigned to any public memember function and invoked in the same thread where it was ivoked.
+ *  Event could be assigned to any public memember function and invoked in the same thread where it was invoked.
  *  It could be used to break synchronius sequence with async call.
  *  In this demo thread created and invoked call ns_EventDemo::startEventDemo() from main thread to initiate demo. 
  *  You can't create event in main threadm because it not registered in threads dispathcher.

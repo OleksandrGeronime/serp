@@ -15,6 +15,7 @@
 #include "tuple_utils.hpp"
 #include "ICallable.hpp"
 #include "CallBinder.hpp"
+#include "Logger.hpp"
 
 namespace itc {
 
@@ -89,5 +90,19 @@ template<typename... Args>
         std::_Mem_fn<void (ContextResponse::*)(Ret)> mResponse;
         std::tuple<Args...> mParams;
         std::string mResponseThread;
+    };
+
+    template<typename... Args> 
+    class InlineEvent : public itc::_private::CallBinder 
+    { 
+        public: 
+        InlineEvent<Args...>(const std::function<void(Args...)>& func, Args... args) 
+        : CallBinder(itc::currentThreadName() 
+            , new itc::CallStatic<Args...>(func, std::make_tuple(args...))) 
+        { 
+            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << "InlineEvent"; 
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); 
+            std::cout << std::endl; 
+        } 
     };
 }
