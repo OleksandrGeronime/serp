@@ -15,9 +15,7 @@
 #include "_private/CallBinder.hpp"
 #include "_private/Logger.hpp"
 
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC system_header
 
 // Declares global alias for global or static function which could be called on specified thread from any thread in application
 // * CONNECTOR - allias for call, should be UNIQUE for all application
@@ -65,10 +63,9 @@ namespace CONNECTOR { \
     typedef TCall<__VA_ARGS__> Call; \
 }
 
-// Declares global alias for member function which will be called thread where it invoked asynchronously
+// Declares global alias for global or static function which will be called thread where it invoked asynchronously
 // * CONNECTOR - allias for event, should be UNIQUE for all application
-// * CLASS - full name of class where function declared with namespaces and class names
-// * METHOD - name of funciton without namespaces and class names, funcition shold be public and return void
+// * METHOD - full name of funciton with namespaces and class names, funcition shold be public and return void
 // * ... funciton argument types
 #define DECLARE_STATIC_EVENT(CONNECTOR, METHOD, ...) \
 namespace CONNECTOR { \
@@ -80,6 +77,27 @@ namespace CONNECTOR { \
         : CallBinder(itc::currentThreadName(), new itc::CallStatic<__VA_ARGS__>(METHOD, std::make_tuple(args...))) \
         { \
             std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #METHOD; \
+            itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
+            std::cout << std::endl; \
+        } \
+    }; \
+    typedef TEvent<__VA_ARGS__> Event; \
+}
+
+// Declares global alias for function type which will be called thread where it invoked asynchronously
+// * CONNECTOR - allias for event, should be UNIQUE for all application
+// * ... funciton argument types
+#define DECLARE_INLINE_EVENT(CONNECTOR, ...) \
+namespace CONNECTOR { \
+    template<typename... Args> \
+    class TEvent : public itc::_private::CallBinder \
+    { \
+        public: \
+        TEvent<Args...>(const std::function<void(Args...)>& func, Args... args) \
+        : CallBinder(itc::currentThreadName() \
+            , new itc::CallStatic<__VA_ARGS__>(func, std::make_tuple(args...))) \
+        { \
+            std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #CONNECTOR; \
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
             std::cout << std::endl; \
         } \
@@ -141,8 +159,6 @@ namespace CONNECTOR { \
     }; \
     typedef TRequest<__VA_ARGS__> Request; \
 }
-
-#pragma GCC diagnostic pop
 
 namespace itc {
     // Global variable storing time point of application start
