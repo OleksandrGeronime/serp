@@ -21,7 +21,11 @@
 namespace ns_CallDemo {
     static const std::string THREAD = "CallDemo_thread";
 
-    struct A 
+    struct I {
+        virtual void vf(int i) = 0;
+    };
+
+    struct A: I
     {
         void func1()
         {
@@ -41,6 +45,10 @@ namespace ns_CallDemo {
         }
 
         void func4(std::shared_ptr<ns_CallDemo::A> pA);
+
+        void vf(int i) override {
+            std::cout << itc::currentThreadName() << ": " << "vf(" << i << ")" << std::endl; 
+        }
 
         A(int i, std::string s): mI(i), mS(s) {}
         int mI;
@@ -63,6 +71,8 @@ DECLARE_CALL(CALL_func2, ns_CallDemo::THREAD, ns_CallDemo::A, func2, int)
 DECLARE_CALL(CALL_func3, ns_CallDemo::THREAD, ns_CallDemo::A, func3, std::string, int, float)
 DECLARE_CALL(CALL_func4, ns_CallDemo::THREAD, ns_CallDemo::A, func4, std::shared_ptr<ns_CallDemo::A>)
 
+DECLARE_CALL(CALL_funcV, ns_CallDemo::THREAD, ns_CallDemo::I, vf, int)
+
 class CallDemo
 {
 public:
@@ -79,4 +89,6 @@ void CallDemo::run()
     itc::invoke(CALL_func2::Call(a.get(), 42));
     itc::invoke(CALL_func3::Call(a.get(), "Demo", 5, 3.14f));
     itc::invoke(CALL_func4::Call(a.get(), a));
+
+    itc::invoke(CALL_funcV::Call(a.get(), 444));
 }

@@ -37,7 +37,7 @@ template<typename... Args>
         std::tuple<Args...> mParams;
     };
 
-    const std::string& currentThreadName(); //To resove name currentThreadName on first phase of ADL
+    const std::string& currentThreadName(); //To resolve name currentThreadName on first phase of ADL
     template<typename Context, typename... Args>
     class Call : public _private::ICallable
     {
@@ -59,7 +59,7 @@ template<typename... Args>
         std::tuple<Args...> mParams;
     };
     
-    bool invoke(const itc::_private::CallBinder& callBinder); //To resove name currentThreadName on first phase of ADL
+    bool invoke(const itc::_private::CallBinder& callBinder); //To resolve name currentThreadName on first phase of ADL
     template<typename ContextRequest, typename ContextResponse,  typename Ret, typename... Args>
     class Request: public _private::ICallable
     {
