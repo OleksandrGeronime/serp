@@ -4,7 +4,7 @@
 
 #include "../../Server/IServer.hpp"
 
-const std::string IClient::THREAD_NAME = "IServer_thread";
+const std::string IClient::THREAD_NAME = "CLIENT";
 
 Client::Client(IServer* pServer)
 : mpServer(pServer)

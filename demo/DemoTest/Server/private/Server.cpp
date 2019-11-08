@@ -4,8 +4,15 @@
 #include <iostream>
 
 #include "Calc.hpp"
+#include "../../Client/IClient.hpp"
 
-const std::string IServer::THREAD_NAME = "IServer_thread";
+const std::string IServer::THREAD_NAME = "SERVER";
+
+Server::Server()
+{
+    itc::createEventLoop(Calc::THREAD_NAME);
+    setCalcConsumer();
+}
 
 void Server::setClient(IClient* pClient)
 {
@@ -14,13 +21,13 @@ void Server::setClient(IClient* pClient)
 
 void Server::requestSum(int a, int b)
 {
-    itc::invoke(EVENT_sum::Event(a, b));
+    itc::invoke(CALL_sum::CallStatic(a, b));
 }
 
 void Server::requestFactorial(int a)
 {
     mTmpFactorial = a - 2;
-    itc::invoke(EVENT_multiply::Event(a, a - 1));
+    itc::invoke(CALL_multiply::CallStatic(a, a - 1));
 }
 
 void Server::requestConvert(std::string s)
@@ -38,7 +45,7 @@ void Server::sumResult(int sum)
 void Server::multiplyResult(int multiply)
 {   
     if (mTmpFactorial > 1) {
-        itc::invoke(EVENT_multiply::Event(multiply, mTmpFactorial));
+        itc::invoke(CALL_multiply::CallStatic(multiply, mTmpFactorial));
         mTmpFactorial--;
     } else {
         itc::invoke(CALL_responseFactorial::Call(mpClient, multiply));
