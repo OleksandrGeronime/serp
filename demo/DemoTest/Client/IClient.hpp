@@ -21,3 +21,5 @@ public:
 DECLARE_CALL(CALL_responseSum, IClient::THREAD_NAME, IClient, responseSum, int)
 DECLARE_CALL(CALL_responseFactorial, IClient::THREAD_NAME, IClient, responseFactorial, int)
 DECLARE_CALL(CALL_responseConvert, IClient::THREAD_NAME, IClient, responseConvert, int)
+
+DECLARE_CALL(CALL_run, IClient::THREAD_NAME, IClient, run)

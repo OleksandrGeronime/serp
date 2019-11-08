@@ -31,5 +31,5 @@ void DemoTest::run()
     itc::createEventLoop(IServer::THREAD_NAME);
     itc::createEventLoop(IClient::THREAD_NAME);
 
-    mpClient->run();
+    itc::invoke(CALL_run::Call(mpClient));
 }

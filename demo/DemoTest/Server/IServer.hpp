@@ -4,9 +4,9 @@
 
 #include "itc.hpp"
 
-#include "../Client/IClient.hpp"
+class IClient;
 
-class IServer 
+class IServer
 {
 public:
     static const std::string THREAD_NAME;

@@ -3,13 +3,12 @@
 #include "../IServer.hpp"
 #include "ICalcConsumer.hpp"
 
+class IClient;
+
 class Server: public IServer, public ICalcConsumer
 {
 public:
-    Server()
-    {
-        setCalcConsumer();
-    }
+    Server();
     virtual ~Server(){}
 
     // IServer

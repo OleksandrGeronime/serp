@@ -6,11 +6,13 @@
 
 namespace Calc
 {
+    extern const std::string THREAD_NAME;
+
     void setCalcConsumer(ICalcConsumer* consumer);
 
     void sum(int a, int b);
     void multiply(int a, int b);
 }
 
-DECLARE_STATIC_EVENT (EVENT_sum, Calc::sum, int, int)
-DECLARE_STATIC_EVENT (EVENT_multiply, Calc::multiply, int, int)
+DECLARE_STATIC_CALL (CALL_sum, Calc::THREAD_NAME, Calc::sum, int, int)
+DECLARE_STATIC_CALL (CALL_multiply, Calc::THREAD_NAME, Calc::multiply, int, int)

@@ -4,11 +4,11 @@
 
 namespace Calc
 {    
+    const std::string THREAD_NAME = "CALC_LIB";
     static ICalcConsumer* gpCalcConsumer = nullptr;
 
     void setCalcConsumer(ICalcConsumer* consumer)
     {
-        std::cout << "Calc::setCalcConsumer " << consumer << std::endl;
         gpCalcConsumer = consumer;
     }
 
