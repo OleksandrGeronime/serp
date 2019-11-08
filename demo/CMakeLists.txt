@@ -25,6 +25,9 @@ include_directories(${ITC_ROOT_DIR})
 #add sources
 set(SRC_FILES
     main.cpp
+    ./DemoTest/Server/private/Server.cpp
+    ./DemoTest/Server/private/Calc.cpp
+    ./DemoTest/Client/private/Client.cpp
 )
 
 # Make executable file
