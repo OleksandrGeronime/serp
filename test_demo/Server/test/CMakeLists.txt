@@ -1,7 +1,7 @@
 # CMake config
 cmake_minimum_required(VERSION 2.6)
 
-project (itctestdemo)
+project (test_itctestdemo)
 
 message ("PROJECT_NAME: ${PROJECT_NAME}")
 
@@ -10,7 +10,7 @@ if (NOT CMAKE_INSTALL_INCLUDEDIR  AND NOT DEFINED ENV{OECORE_TARGET_SYSROOT} )
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPCBUILD")
 endif (NOT CMAKE_INSTALL_INCLUDEDIR  AND NOT DEFINED ENV{OECORE_TARGET_SYSROOT})
 
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../" "${BUILD_DIRECTORY}/itcFramework")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../../../" "${BUILD_DIRECTORY}/itcFramework")
 
 set (WARNING_SUPPRESSION_FLAGS "-Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-unused-value")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11 -Wno-variadic-macros ${WARNING_SUPPRESSION_FLAGS}")
@@ -24,10 +24,8 @@ include_directories(${ITC_ROOT_DIR})
 
 #add sources
 set(SRC_FILES
-    main.cpp
-    ./Server/private/Server.cpp
-    ./Calc/private/Calc.cpp
-    ./Client/private/Client.cpp
+    test.cpp
+    ../private/Server.cpp
 )
 
 # Make executable file

@@ -2,90 +2,12 @@
 #include <chrono>
 #include <sstream>
 
-#include "Server/private/Server.hpp"
-#include "Client/IClient.hpp"
-#include "Calc/ICalc.hpp"
+#include "../private/Server.hpp"
+#include "stubs/CalcStub.hpp"
+#include "stubs/ClientStub.hpp"
 
 const std::string IClient::THREAD_NAME = "SERVER_TEST";
 const std::string ICalc::THREAD_NAME = "SERVER_TEST";
-
-template <typename Head, typename... Tail>
-void args(std::ostream& out, Head&& head, Tail&&... tail)
-{    
-    out << "(" << std::forward<Head>(head);
-    using expander = int[];
-    (void)expander{0, (void(out << ", " << std::forward<Tail>(tail)), 0)...};
-    out << ")";
-}
-
-class Validator
-{
-public:
-    void waitFor(std::string expected) 
-    {
-        std::cout << "Validator111 expected:\"" + expected + "\" and received \"" << mReceived << "\"" << std::endl;
-        while (!mbReady) {
-            std::cout << ".";
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-        mbReady = false;
-
-        std::cout << "Validator expected:\"" + expected + "\" and received \"" << mReceived << "\"" << std::endl;
-
-        if (expected != mReceived) {
-            throw "VALIDATION FAILED";
-        }
-    }
-
-    void validate(std::string result) 
-    {
-        mReceived = result;
-        mbReady = true;
-    }
-
-    bool mbReady = false;
-    std::string mReceived;
-};
-
-class CalcStub: public ICalc
-{
-public:
-    CalcStub(Validator* pValidator): mpValidator(pValidator){}
-
-    void setConsumer(ICalcConsumer* pConsumer) override{};
-    void sum(int a, int b) override{};
-    void multiply(int a, int b) override
-    {
-        std::ostringstream stream;
-        stream << "ICalc::multiply(" << a << ", " << b << ")";
-        mpValidator->validate(stream.str()); 
-    };
-
-private:
-    Validator* mpValidator;
-};
-
-class ClientStub: public IClient
-{
-public:
-    ClientStub(Validator* pValidator): mpValidator(pValidator){}
-
-    void responseSum(int response) override {}
-    void responseFactorial(int response) override 
-    {
-        std::ostringstream stream;
-        stream << "IClient::responseFactorial(" << response << ")";
-        mpValidator->validate(stream.str()); 
-    };
-    void responseConvert(int response) override {}
-
-    void run() override {}
-
-private:
-    Validator* mpValidator;
-};
-
-
 
 void testCase1(Server* pServer, Validator* pValidator)
 {
