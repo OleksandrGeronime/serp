@@ -2,14 +2,12 @@
 
 #include "itc.hpp"
 
-#include "../IServer.hpp"
+#include "../Server/IServer.hpp"
 
 class ICalcConsumer
 {
 public:
-    static const std::string THREAD_NAME;
-
-    virtual ~ICalcConsumer(){};
+    virtual ~ICalcConsumer() = default;
 
     virtual void sumResult(int sum) = 0;
     virtual void multiplyResult(int multiply) = 0;

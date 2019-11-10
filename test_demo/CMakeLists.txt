@@ -1,7 +1,7 @@
 # CMake config
 cmake_minimum_required(VERSION 2.6)
 
-project (itcdemo)
+project (itctestdemo)
 
 message ("PROJECT_NAME: ${PROJECT_NAME}")
 
@@ -25,6 +25,9 @@ include_directories(${ITC_ROOT_DIR})
 #add sources
 set(SRC_FILES
     main.cpp
+    ./Server/private/Server.cpp
+    ./Calc/private/Calc.cpp
+    ./Client/private/Client.cpp
 )
 
 # Make executable file
@@ -32,6 +35,27 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 target_link_libraries(
     ${PROJECT_NAME}
+    pthread
+	itcframework
+)
+
+
+
+
+
+# test
+
+#add sources
+set(SRC_FILES
+    test.cpp
+    ./Server/private/Server.cpp
+)
+
+# Make test executable file
+add_executable(${PROJECT_NAME}_test ${SRC_FILES})
+
+target_link_libraries(
+    ${PROJECT_NAME}_test
     pthread
 	itcframework
 )

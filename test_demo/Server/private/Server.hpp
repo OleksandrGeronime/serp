@@ -1,15 +1,16 @@
 #pragma once
 
 #include "../IServer.hpp"
-#include "ICalcConsumer.hpp"
+#include "../../Calc/ICalcConsumer.hpp"
 
+class ICalc;
 class IClient;
 
 class Server: public IServer, public ICalcConsumer
 {
 public:
-    Server();
-    virtual ~Server(){}
+    Server(ICalc* pCalc);
+    virtual ~Server();
 
     // IServer
     void setClient(IClient* pClient) override;
@@ -22,8 +23,7 @@ public:
     void multiplyResult(int multiply) override;
 
 private:
-    void setCalcConsumer();
-
+    ICalc* mpCalc;
     IClient* mpClient;
     int mTmpFactorial;
 };

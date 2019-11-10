@@ -2,19 +2,23 @@
 
 #include "Server/private/Server.hpp"
 #include "Client/private/Client.hpp"
+#include "Calc/private/Calc.hpp"
 
-class DemoTest
+class TestDemo
 {
 public:
-    DemoTest()
-    : mpServer(new Server())
+    TestDemo()
+    : mpCalc(new Calc())
+    , mpServer(new Server(mpCalc))
     , mpClient(new Client(mpServer))
     {
         mpServer->setClient(mpClient);
+        mpCalc->setConsumer(mpServer);
     }
 
-    ~DemoTest()
+    ~TestDemo()
     {
+        delete mpCalc;
         delete mpServer;
         delete mpClient;
     }
@@ -22,14 +26,16 @@ public:
     void run();
 
 private:
-    IServer* mpServer;
-    IClient* mpClient;
+    Calc* mpCalc;
+    Server* mpServer;
+    Client* mpClient;
 };
 
-void DemoTest::run() 
+void TestDemo::run() 
 {
     itc::createEventLoop(IServer::THREAD_NAME);
     itc::createEventLoop(IClient::THREAD_NAME);
+    itc::createEventLoop(ICalc::THREAD_NAME);
 
     itc::invoke(CALL_run::Call(mpClient));
 }
