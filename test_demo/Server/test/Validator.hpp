@@ -3,37 +3,23 @@
 #include <string>
 #include <iostream>
 #include <thread>
+#include <condition_variable>
+#include <mutex>
+#include <queue>
 
 class Validator
 {
 public:
-    static const int MAX_WAIT = 1000;
+    Validator(int timeout = 1000);
+    ~Validator() = default;
 
-    void waitFor(std::string expected) 
-    {
-        int counter = 0;
-        while (!mbReady) {
-            counter++;
-            if (counter >= MAX_WAIT) {
-                throw "RESPONSE TIMEOUT";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-        mbReady = false;
+    void waitFor(std::string expected);
+    void validate(std::string result);
 
-        std::cout << "Validator expected:\"" + expected + "\" and received \"" << mReceived << "\"" << std::endl;
-
-        if (expected != mReceived) {
-            throw "VALIDATION FAILED";
-        }
-    }
-
-    void validate(std::string result) 
-    {
-        mReceived = result;
-        mbReady = true;
-    }
-
+private:
+    std::condition_variable mCV;
+    std::mutex mMutex;
+    std::queue<std::string> mToValidate;
+    int mTimeout;
     bool mbReady = false;
-    std::string mReceived;
 };
