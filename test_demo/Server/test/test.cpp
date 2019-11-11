@@ -50,7 +50,7 @@ int main()
     itc::createEventLoop(IServer::THREAD_NAME);
     itc::createEventLoop(IClient::THREAD_NAME);
     
-    Validator* pValidator = new Validator();
+    Validator* pValidator = new Validator(2000);
     ICalc* pCalc = new CalcStub(pValidator);
     IClient* pClient = new ClientStub(pValidator);
     Server server(pCalc);
@@ -64,7 +64,7 @@ int main()
         testCase2(&server, pValidator);
         std::cout << "Test case 2 SUCCESS" << std::endl;
     }
-    catch(char const* exeption) {
+    catch(std::string exeption) {
         std::cerr << exeption << std::endl;
     }
 

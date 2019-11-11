@@ -25,6 +25,7 @@ include_directories(${ITC_ROOT_DIR})
 #add sources
 set(SRC_FILES
     test.cpp
+    Validator.cpp
     ../private/Server.cpp
 )
 

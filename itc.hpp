@@ -55,7 +55,7 @@ namespace CONNECTOR { \
             , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
             , std::make_tuple(args...))) \
         { \
-            std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #CLASS << "::" << #METHOD; \
+            std::cout << itc::currentThreadName() << " -> " << THREAD << ": " << #CLASS << "::" << #METHOD; \
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
             std::cout << std::endl; \
         } \
