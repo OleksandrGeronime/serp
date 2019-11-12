@@ -80,7 +80,7 @@ template<typename... Args>
         
         void call() const override {
             Ret result = tuple_utils::apply(mContextRequest, mRequest, mParams);
-            invoke(_private::CallBinder(mResponseThread, new itc::Call<ContextResponse, Ret>(mContextResponse, mResponse, std::make_tuple<Ret>(std::forward<Ret>(result)))));
+            invoke(_private::CallBinder(mResponseThread, std::make_shared<itc::Call<ContextResponse, Ret>>(mContextResponse, mResponse, std::make_tuple<Ret>(std::forward<Ret>(result)))));
         }
 
     private:
@@ -98,7 +98,7 @@ template<typename... Args>
         public: 
         InlineEvent<Args...>(const std::function<void(Args...)>& func, Args... args) 
         : CallBinder(itc::currentThreadName() 
-            , new itc::CallStatic<Args...>(func, std::make_tuple(args...))) 
+            , std::make_shared<itc::CallStatic<Args...>>(func, std::make_tuple(args...))) 
         { 
             std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << "InlineEvent"; 
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); 

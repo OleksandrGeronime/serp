@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <memory>
+
 namespace itc {
     namespace _private {
 
@@ -30,18 +32,18 @@ namespace itc {
         class Event
         {
         public:
-            Event(const itc::_private::ICallable* callable);
-            Event(EventType type, EventPriority priority, const itc::_private::ICallable* callable);
+            Event(std::shared_ptr<ICallable> callable);
+            Event(EventType type, EventPriority priority, std::shared_ptr<ICallable> callable);
             ~Event();
 
             inline EventType getType() const { return mType; }
             inline EventPriority getPriority() const { return mPriority; }
-            inline const ICallable* getCallable() const { return mpCallable; }
+            inline std::shared_ptr<ICallable> getCallable() const { return mpCallable; }
 
         private:
             const EventType mType;
             const EventPriority mPriority;
-            const ICallable* mpCallable;
+            std::shared_ptr<ICallable> mpCallable;
         };
     }
 }

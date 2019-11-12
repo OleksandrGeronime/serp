@@ -11,6 +11,7 @@
 
 #include <string>
 #include <chrono>
+#include <memory>
 
 namespace itc {
 
@@ -40,7 +41,7 @@ namespace itc {
 	class Timer: public ITimer
 	{
 	public:
-		Timer(const _private::ICallable* callable, std::chrono::milliseconds period, bool repeating, int timerId);
+		Timer(std::shared_ptr<_private::ICallable> callable, std::chrono::milliseconds period, bool repeating, int timerId);
         virtual ~Timer();
 
         Timer(const Timer&) = delete;
@@ -58,14 +59,14 @@ namespace itc {
 		bool isRepeating() const override { return mbRepeating; }
 		std::chrono::system_clock::time_point getStartedTime() const override { return mStartedTime; }
 		int getId() const override { return mTimerId; }
-		const _private::Event* getEvent() const { return mpEvent; }
+		std::shared_ptr<_private::Event> getEvent() const { return mpEvent; }
 
 		bool operator==(const itc::Timer& timer) {
 			return this->mTimerId == timer.mTimerId;
 		}
 
 	private:
-		const _private::Event* mpEvent;
+		std::shared_ptr<_private::Event> mpEvent;
 		std::chrono::milliseconds mPeriod;
 		bool mbRepeating;
 		bool mbStarted;
