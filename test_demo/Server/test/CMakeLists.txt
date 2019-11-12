@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 
 project (test_itctestdemo)
 
+find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
+
 message ("PROJECT_NAME: ${PROJECT_NAME}")
 
 if (NOT CMAKE_INSTALL_INCLUDEDIR  AND NOT DEFINED ENV{OECORE_TARGET_SYSROOT} )
@@ -20,12 +23,16 @@ message ("BUILD_DIRECTORY : ${BUILD_DIRECTORY}")
 message ("ITC_ROOT_DIR : ${ITC_ROOT_DIR}")
 
 # Common includes
-include_directories(${ITC_ROOT_DIR})
+include_directories(
+    ${ITC_ROOT_DIR} 
+    ${GTEST_INCLUDE_DIRS}
+)
 
 #add sources
 set(SRC_FILES
-    test.cpp
-    Validator.cpp
+    main.cpp
+    ServerTest.cpp
+    ../../../itctest/Validator.cpp
     ../private/Server.cpp
 )
 
@@ -35,5 +42,6 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 target_link_libraries(
     ${PROJECT_NAME}
     pthread
-	itcframework
+    itcframework
+    ${GTEST_LIBRARIES}
 )

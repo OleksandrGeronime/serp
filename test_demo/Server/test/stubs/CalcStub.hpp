@@ -2,13 +2,13 @@
 
 #include <sstream>
 
-#include "../Validator.hpp"
+#include "itctest/Validator.hpp"
 #include "../../../Calc/ICalc.hpp"
 
 class CalcStub: public ICalc
 {
 public:
-    CalcStub(Validator* pValidator): mpValidator(pValidator){}
+    CalcStub(itc::test::Validator* pValidator): mpValidator(pValidator){}
 
     void setConsumer(ICalcConsumer* pConsumer) override{};
     void sum(int a, int b) override{};
@@ -20,5 +20,5 @@ public:
     };
 
 private:
-    Validator* mpValidator;
+    itc::test::Validator* mpValidator;
 };
