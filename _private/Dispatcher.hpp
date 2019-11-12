@@ -13,7 +13,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
-
+#include <memory>
 namespace itc {
     namespace _private {
 
@@ -23,26 +23,21 @@ namespace itc {
         class Dispatcher
         {
         public:
-            static Dispatcher* getInstance() {
-                std::lock_guard<std::recursive_mutex> lock (gMutex);
-                if (nullptr == mpInstance) {
-                    mpInstance = new Dispatcher();
-                }
-                return mpInstance;    
+            static Dispatcher& getInstance() {
+                static Dispatcher instance;
+                return instance;    
             }
 
-            void registerThread(EventLoop* thread);
+            void registerEventLoop(std::shared_ptr<EventLoop> eventLoop);
 
             void printThreads() const;
 
-            EventLoop* getThreadByName(const std::string& name) const;
-            EventLoop* getThreadById(const std::thread::id& id) const;
+            std::shared_ptr<EventLoop> getThreadByName(const std::string& name) const;
+            std::shared_ptr<EventLoop> getThreadById(const std::thread::id& id) const;
             
         private:
             Dispatcher();
-
-            static Dispatcher* mpInstance;
-            std::map<std::thread::id, EventLoop*> mThreads;
+            std::map<std::thread::id, std::shared_ptr<EventLoop>> mThreads;
         };
 
 }

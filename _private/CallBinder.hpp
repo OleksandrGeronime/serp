@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 namespace itc {
     namespace _private {
@@ -16,15 +17,15 @@ namespace itc {
 
         class CallBinder {
         public:
-            CallBinder(const std::string& threadName, itc::_private::ICallable* pCallable) 
+            CallBinder(const std::string& threadName, std::shared_ptr<itc::_private::ICallable> pCallable) 
                 : mpCallable(pCallable)
                 , mThreadName(threadName)
                 {}
             virtual ~CallBinder() {};
-            inline const itc::_private::ICallable* getCallable() const { return mpCallable; }
+            inline std::shared_ptr<itc::_private::ICallable> getCallable() const { return mpCallable; }
             inline const std::string& getThreadName() const { return mThreadName; }
         protected:
-            const itc::_private::ICallable* mpCallable; 
+            std::shared_ptr<itc::_private::ICallable> mpCallable; 
             const std::string& mThreadName; 
         };
     }

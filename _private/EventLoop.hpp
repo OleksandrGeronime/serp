@@ -11,10 +11,10 @@
 
 #include <thread>
 #include <mutex>
-#include <atomic>
 #include <condition_variable>
 #include <queue>
 #include <list>
+#include <memory>
 
 #include "Timer.hpp"
 
@@ -30,7 +30,6 @@ namespace itc {
             EventLoop(const std::string& threadName);
             ~EventLoop();
 
-            bool createThread();
             void exitThread();
 
             std::thread::id getThreadId() const;
@@ -38,8 +37,8 @@ namespace itc {
             static std::thread::id getCurrentThreadId();
             inline int getLastTimerId() { return mLastTimerId; }
             
-            void push(const ICallable* call);
-            Timer& addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating);
+            void push(std::shared_ptr<ICallable> call);
+            Timer& addTimer(std::shared_ptr<ICallable> call, std::chrono::milliseconds period, bool repeating);
             void removeTimer(const Timer& timer);
             void bringNextToFront();
             
@@ -50,9 +49,9 @@ namespace itc {
             void run();
             
             bool mbStop;
-            std::thread* mThread;
+            std::thread::id mThreadId;
             const std::string mThreadName;
-            std::queue<Event*> mEvents;
+            std::queue<std::shared_ptr<Event>> mEvents;
             std::list<Timer> mTimers;
             static int mNextTimerId;
             int mLastTimerId;

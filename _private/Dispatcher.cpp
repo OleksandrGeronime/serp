@@ -18,18 +18,16 @@
 namespace itc {
     namespace _private {
 
-        Dispatcher* Dispatcher::mpInstance = nullptr;
-
         Dispatcher::Dispatcher()
         : mThreads()
         {}
 
-        void Dispatcher::registerThread(EventLoop* thread) {
+        void Dispatcher::registerEventLoop(std::shared_ptr<EventLoop> eventLoop) {
 
             std::lock_guard<std::recursive_mutex> lock (gMutex);
-            const std::thread::id& id = thread->getThreadId();
-            mThreads[id] = thread;
-            std::cout << "Dispatcher::registerThread " << id << " " << thread->getThreadName() << " size=" << mThreads.size() << std::endl;
+            const std::thread::id& id = eventLoop->getThreadId();
+            mThreads[id] = eventLoop;
+            std::cout << "Dispatcher::registerThread " << id << " " << eventLoop->getThreadName() << " size=" << mThreads.size() << std::endl;
             //printThreads();
         }
 
@@ -40,7 +38,7 @@ namespace itc {
             }        
         }
 
-        EventLoop* Dispatcher::getThreadById(const std::thread::id& id) const {
+        std::shared_ptr<EventLoop> Dispatcher::getThreadById(const std::thread::id& id) const {
             std::lock_guard<std::recursive_mutex> lock (gMutex);
             if (mThreads.count(id) > 0) {
                 return mThreads.at(id);
@@ -51,10 +49,10 @@ namespace itc {
             }
         }       
 
-        EventLoop* Dispatcher::getThreadByName(const std::string& name) const {
+        std::shared_ptr<EventLoop> Dispatcher::getThreadByName(const std::string& name) const {
             std::lock_guard<std::recursive_mutex> lock (gMutex);
 
-            auto it = std::find_if( mThreads.begin(), mThreads.end(), [name](const std::pair<std::thread::id, EventLoop*>& p) {
+            auto it = std::find_if( mThreads.begin(), mThreads.end(), [name](const std::pair<std::thread::id, std::shared_ptr<EventLoop>>& p) {
                 return p.second->getThreadName() == name;
             });
             

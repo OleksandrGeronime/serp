@@ -25,7 +25,7 @@ namespace itc {
 
         EventLoop::EventLoop(const std::string& threadName) 
         : mbStop(false)
-        , mThread(nullptr)
+        , mThreadId()
         , mThreadName(threadName)
         , mEvents()
         , mTimers()
@@ -33,6 +33,9 @@ namespace itc {
         , mMutex()
         , mCV()        
         {
+            std::thread thread(&EventLoop::run, this);
+            mThreadId = thread.get_id();
+            thread.detach();
         }
 
         EventLoop::~EventLoop()
@@ -40,16 +43,9 @@ namespace itc {
             exitThread();
         }
 
-        bool EventLoop::createThread()
-        {
-            if (!mThread)
-                mThread = new std::thread(&EventLoop::run, this);    
-            return true;
-        }
-
         std::thread::id EventLoop::getThreadId() const
         {
-            return mThread->get_id();
+            return mThreadId;
         }
 
         const std::string& EventLoop::getThreadName() const
@@ -62,9 +58,9 @@ namespace itc {
             return std::this_thread::get_id();
         }
 
-        void EventLoop::push(const ICallable* call)
+        void EventLoop::push(std::shared_ptr<ICallable> call)
         {
-            Event* event = new Event(call);
+            std::shared_ptr<Event> event = std::make_shared<Event>(call);
 
             std::unique_lock<std::mutex> lock(mMutex);
             mEvents.push(event);
@@ -96,7 +92,7 @@ namespace itc {
             mCV.notify_one();
         }
 
-        Timer& EventLoop::addTimer(const ICallable* call, std::chrono::milliseconds period, bool repeating)
+        Timer& EventLoop::addTimer(std::shared_ptr<ICallable> call, std::chrono::milliseconds period, bool repeating)
         {
             mTimers.emplace_back(call, period, repeating, mNextTimerId);
             Timer& result = mTimers.back();
@@ -122,19 +118,14 @@ namespace itc {
 
         void EventLoop::exitThread()
         {
-            if (!mThread)
-                return;
+            // TODO
 
-            Event* event = new Event(EventType::SYSTEM, EventPriority::HIGHEST, 0);
-            {
-                std::lock_guard<std::mutex> lock(mMutex);
-                mEvents.push(event);                
-                mCV.notify_one();
-            }
-
-            mThread->join();
-            delete mThread;
-            mThread = 0;
+            // std::shared_ptr<Event> event = std::make_shared<Event>(EventType::SYSTEM, EventPriority::HIGHEST, nullptr);
+            // {
+            //     std::lock_guard<std::mutex> lock(mMutex);
+            //     mEvents.push(event);                
+            //     mCV.notify_one();
+            // }
         }
 
         void EventLoop::run()
@@ -143,7 +134,7 @@ namespace itc {
             {
                 if (LOG_ENABLE) std::cout << getThreadName() << " loop" << std::endl;
 
-                const Event* event = nullptr;
+                std::shared_ptr<Event> event = nullptr;
                 bool bDeleteCallable = true;
                 {
                     // std::contidion_variable::wait_for with max period not wait, so will use just some big period value for wait if no timers 
@@ -192,11 +183,11 @@ namespace itc {
                 }
 
                 if (LOG_ENABLE)  std::cout << getThreadName() << " got event and call" << std::endl;
-                const ICallable* callable = event->getCallable();
+                std::shared_ptr<ICallable> callable = event->getCallable();
                 callable->call();
                 
                 if (bDeleteCallable) {
-                    delete event;
+                    //delete event;
                 }
             }
         }

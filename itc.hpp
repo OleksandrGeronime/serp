@@ -28,7 +28,7 @@ namespace CONNECTOR { \
     class TCallStatic : public itc::_private::CallBinder { \
     public: \
         TCallStatic(Args... args) \
-        : CallBinder(THREAD, new itc::CallStatic<Args...>(METHOD, std::make_tuple(args...))) \
+        : CallBinder(THREAD, std::make_shared<itc::CallStatic<Args...>>(METHOD, std::make_tuple(args...))) \
         { \
             std::cout << itc::currentThreadName() << " ---CALL---> " << THREAD << ": " << #METHOD; \
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
@@ -51,7 +51,7 @@ namespace CONNECTOR { \
     { \
     public: \
         TCall<Args...>(CLASS* context, Args... args) \
-        : CallBinder(THREAD, new itc::Call<CLASS, ## __VA_ARGS__>(context \
+        : CallBinder(THREAD, std::make_shared<itc::Call<CLASS, ## __VA_ARGS__>>(context \
             , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
             , std::make_tuple(args...))) \
         { \
@@ -74,7 +74,7 @@ namespace CONNECTOR { \
     { \
     public: \
         TEvent<Args...>(Args... args) \
-        : CallBinder(itc::currentThreadName(), new itc::CallStatic<__VA_ARGS__>(METHOD, std::make_tuple(args...))) \
+        : CallBinder(itc::currentThreadName(), std::make_shared<itc::CallStatic<__VA_ARGS__>>(METHOD, std::make_tuple(args...))) \
         { \
             std::cout << " ---EVENT---> " << itc::currentThreadName() << ": " << #METHOD; \
             itc::_private::logArgs(std::cout, std::forward<Args>(args)...); \
@@ -117,7 +117,7 @@ namespace CONNECTOR { \
     { \
     public: \
         TEvent<Args...>(CLASS* context, Args... args) \
-        : CallBinder(itc::currentThreadName(), new itc::Call<CLASS, ## __VA_ARGS__>(context \
+        : CallBinder(itc::currentThreadName(), std::make_shared<itc::Call<CLASS, ## __VA_ARGS__>>(context \
             , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
             , std::make_tuple(args...))) \
         { \
@@ -146,7 +146,7 @@ namespace CONNECTOR { \
     { \
     public: \
         TRequest<Args...>(CLASS_REQUEST* contextRequest, CLASS_RESPONSE* contextResponse, Args... args) \
-            : CallBinder(THREAD, new itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>(contextRequest \
+            : CallBinder(THREAD, std::make_shared<itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>>(contextRequest \
             , contextResponse \
             , std::mem_fn(static_cast<RET (CLASS_REQUEST::*)(__VA_ARGS__)>(&CLASS_REQUEST::METHOD_REQUEST)) \
             , std::mem_fn(static_cast<void (CLASS_RESPONSE::*)(RET)>(&CLASS_RESPONSE::METHOD_RESPONSE)) \

@@ -17,7 +17,7 @@
 
 namespace itc {
 
-    Timer::Timer(const _private::ICallable* callable, std::chrono::milliseconds period, bool repeating, int timerId)
+    Timer::Timer(std::shared_ptr<_private::ICallable> callable, std::chrono::milliseconds period, bool repeating, int timerId)
         : mpEvent(new _private::Event(callable))
         , mPeriod(period)
         , mbRepeating(repeating)
@@ -40,7 +40,7 @@ namespace itc {
     void Timer::start() {
         mStartedTime = std::chrono::system_clock::now();
         mbStarted = true;
-        _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->bringNextToFront();
+        _private::Dispatcher::getInstance().getThreadById(std::this_thread::get_id())->bringNextToFront();
 
         //std::cout << "Timer::start()" << std::endl;
     }
@@ -48,7 +48,7 @@ namespace itc {
     void Timer::stop() {
         //std::cout << "Timer::stop()" << std::endl;
         mbStarted = false; 
-        _private::Dispatcher::getInstance()->getThreadById(std::this_thread::get_id())->bringNextToFront();
+        _private::Dispatcher::getInstance().getThreadById(std::this_thread::get_id())->bringNextToFront();
     }
 
 }
