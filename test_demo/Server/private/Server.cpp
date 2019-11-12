@@ -39,8 +39,6 @@ void Server::requestConvert(std::string s)
     itc::invoke(CALL_responseConvert::Call(mpClient, std::stoi(s)));
 }
 
-
-
 void Server::sumResult(int sum)
 {
     itc::invoke(CALL_responseSum::Call(mpClient, sum));
