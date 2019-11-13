@@ -67,12 +67,12 @@ DECLARE_EVENT (EVENT_func4, ns_EventDemo::EventConsumer, func4, std::shared_ptr<
 
 namespace ns_EventDemo {
     void startEventDemo() {
-        ns_EventDemo::EventConsumer consumer;
+        auto consumer = std::make_shared<ns_EventDemo::EventConsumer>();
 
-        itc::invoke(EVENT_func1::Event(&consumer));
-        itc::invoke(EVENT_func2::Event(&consumer, 5));
-        itc::invoke(EVENT_func3::Event(&consumer, "HELLO", 42, 5.5f));
-        itc::invoke(EVENT_func4::Event(&consumer, std::make_shared<ns_EventDemo::A>(33, "Hello A")));
+        itc::invoke(EVENT_func1::Event(consumer));
+        itc::invoke(EVENT_func2::Event(consumer, 5));
+        itc::invoke(EVENT_func3::Event(consumer, "HELLO", 42, 5.5f));
+        itc::invoke(EVENT_func4::Event(consumer, std::make_shared<ns_EventDemo::A>(33, "Hello A")));
     }
 }
 

@@ -6,7 +6,7 @@
 
 const std::string IClient::THREAD_NAME = "CLIENT";
 
-Client::Client(IServer* pServer)
+Client::Client(std::shared_ptr<IServer> pServer)
 : mpServer(pServer)
 {
 }

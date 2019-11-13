@@ -13,7 +13,7 @@ namespace itc {
 
         class ICallable {
         public:
-            virtual ~ICallable() {};
+            virtual ~ICallable() = default;
             virtual void call() const = 0;
         };
 

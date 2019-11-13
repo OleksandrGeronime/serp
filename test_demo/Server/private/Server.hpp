@@ -9,11 +9,11 @@ class IClient;
 class Server: public IServer, public ICalcConsumer
 {
 public:
-    Server(ICalc* pCalc);
-    virtual ~Server();
+    Server(std::shared_ptr<ICalc> pCalc);
+    virtual ~Server() = default;
 
     // IServer
-    void setClient(IClient* pClient) override;
+    void setClient(std::shared_ptr<IClient> pClient) override;
     void requestSum(int a, int b) override;
     void requestFactorial(int a) override;
     void requestConvert(std::string s) override;
@@ -23,7 +23,7 @@ public:
     void multiplyResult(int multiply) override;
 
 private:
-    ICalc* mpCalc;
-    IClient* mpClient;
+    std::shared_ptr<ICalc> mpCalc;
+    std::shared_ptr<IClient> mpClient;
     int mTmpFactorial;
 };

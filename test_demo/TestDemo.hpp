@@ -8,27 +8,22 @@ class TestDemo
 {
 public:
     TestDemo()
-    : mpCalc(new Calc())
-    , mpServer(new Server(mpCalc))
-    , mpClient(new Client(mpServer))
+    : mpCalc(std::make_shared<Calc>())
+    , mpServer(std::make_shared<Server>(mpCalc))
+    , mpClient(std::make_shared<Client>(mpServer))
     {
         mpServer->setClient(mpClient);
         mpCalc->setConsumer(mpServer);
     }
 
-    ~TestDemo()
-    {
-        delete mpCalc;
-        delete mpServer;
-        delete mpClient;
-    }
+    ~TestDemo() = default;
 
     void run();
 
 private:
-    Calc* mpCalc;
-    Server* mpServer;
-    Client* mpClient;
+    std::shared_ptr<Calc> mpCalc;
+    std::shared_ptr<Server> mpServer;
+    std::shared_ptr<Client> mpClient;
 };
 
 void TestDemo::run() 

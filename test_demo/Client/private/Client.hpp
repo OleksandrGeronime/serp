@@ -7,8 +7,8 @@ class IServer;
 class Client: public IClient 
 {
 public:
-    Client(IServer* pServer);
-    virtual ~Client(){}
+    Client(std::shared_ptr<IServer> pServer);
+    virtual ~Client() = default;
     
     // IClient
     void responseSum(int response) override;
@@ -18,5 +18,5 @@ public:
     void run() override;
 
 private:
-    IServer* mpServer;
+    std::shared_ptr<IServer> mpServer;
 };

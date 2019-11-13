@@ -50,7 +50,7 @@ namespace CONNECTOR { \
     class TCall : public itc::_private::CallBinder \
     { \
     public: \
-        TCall<Args...>(CLASS* context, Args... args) \
+        TCall<Args...>(std::shared_ptr<CLASS> context, Args... args) \
         : CallBinder(THREAD, std::make_shared<itc::Call<CLASS, ## __VA_ARGS__>>(context \
             , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
             , std::make_tuple(args...))) \
@@ -116,7 +116,7 @@ namespace CONNECTOR { \
     class TEvent : public itc::_private::CallBinder \
     { \
     public: \
-        TEvent<Args...>(CLASS* context, Args... args) \
+        TEvent<Args...>(std::shared_ptr<CLASS> context, Args... args) \
         : CallBinder(itc::currentThreadName(), std::make_shared<itc::Call<CLASS, ## __VA_ARGS__>>(context \
             , std::mem_fn(static_cast<void (CLASS::*)(__VA_ARGS__)>(&CLASS::METHOD)) \
             , std::make_tuple(args...))) \
@@ -145,7 +145,7 @@ namespace CONNECTOR { \
     class TRequest : public itc::_private::CallBinder \
     { \
     public: \
-        TRequest<Args...>(CLASS_REQUEST* contextRequest, CLASS_RESPONSE* contextResponse, Args... args) \
+        TRequest<Args...>(std::shared_ptr<CLASS_REQUEST> contextRequest, std::shared_ptr<CLASS_RESPONSE> contextResponse, Args... args) \
             : CallBinder(THREAD, std::make_shared<itc::Request<CLASS_REQUEST, CLASS_RESPONSE, RET, ## __VA_ARGS__>>(contextRequest \
             , contextResponse \
             , std::mem_fn(static_cast<RET (CLASS_REQUEST::*)(__VA_ARGS__)>(&CLASS_REQUEST::METHOD_REQUEST)) \

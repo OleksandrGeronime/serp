@@ -42,7 +42,7 @@ template<typename... Args>
     class Call : public _private::ICallable
     {
     public:
-        Call(Context* context, std::_Mem_fn<void (Context::*)(Args...)> func, std::tuple<Args...> params = std::make_tuple<>())
+        Call(std::shared_ptr<Context> context, std::_Mem_fn<void (Context::*)(Args...)> func, std::tuple<Args...> params = std::make_tuple<>())
             : mContext(context)
             , mFunc(func)
             , mParams(params)
@@ -54,7 +54,7 @@ template<typename... Args>
             tuple_utils::apply(mContext, mFunc, mParams);
         }
     private:
-        Context* mContext;
+        std::shared_ptr<Context> mContext;
         std::_Mem_fn<void (Context::*)(Args...)> mFunc;
         std::tuple<Args...> mParams;
     };
@@ -64,8 +64,8 @@ template<typename... Args>
     class Request: public _private::ICallable
     {
     public:
-        Request(ContextRequest* contextRequest, 
-            ContextResponse* contextResponse, 
+        Request(std::shared_ptr<ContextRequest> contextRequest, 
+            std::shared_ptr<ContextResponse> contextResponse, 
             std::_Mem_fn<Ret (ContextRequest::*)(Args...)> request,            
             std::_Mem_fn<void (ContextResponse::*)(Ret)> response, 
             std::tuple<Args...> params)
@@ -84,8 +84,8 @@ template<typename... Args>
         }
 
     private:
-        ContextRequest* mContextRequest;
-        ContextResponse* mContextResponse;
+        std::shared_ptr<ContextRequest>mContextRequest;
+        std::shared_ptr<ContextResponse> mContextResponse;
         std::_Mem_fn<Ret (ContextRequest::*)(Args...)> mRequest;
         std::_Mem_fn<void (ContextResponse::*)(Ret)> mResponse;
         std::tuple<Args...> mParams;

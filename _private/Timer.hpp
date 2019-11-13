@@ -23,7 +23,7 @@ namespace itc {
 	class ITimer
 	{
 	public:
-		virtual ~ITimer(){}
+		virtual ~ITimer() = default;
 
 		virtual void call() = 0;
 
