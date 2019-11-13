@@ -9,7 +9,7 @@
 class ClientStub: public IClient
 {
 public:
-    ClientStub(itc::test::Validator* pValidator): mpValidator(pValidator){}
+    ClientStub(std::shared_ptr<itc::test::Validator> pValidator): mpValidator(pValidator){}
 
     void responseSum(int response) override {}
     void responseFactorial(int response) override 
@@ -23,5 +23,5 @@ public:
     void run() override {}
 
 private:
-    itc::test::Validator* mpValidator;
+    std::shared_ptr<itc::test::Validator> mpValidator;
 };

@@ -1,7 +1,5 @@
 /** @file ServerTest.hpp
- *  @brief Header file to include all test cases
- *
- *  Just include your test case here to run it
+ *  @brief Declaration of class for testing Server
  *
  *  @date 2019
  *  @author Alexander Geronime
@@ -22,13 +20,13 @@ class ServerTest: public ::testing::Test
 {
 public:
     ServerTest();
-    ~ServerTest();
+    ~ServerTest() = default;
     void SetUp() override;
     void TearDown() override;
 
 protected:
-    itc::test::Validator* mpValidator;
-    ICalc* mpCalc;
-    IClient* mpClient;
-    Server* mpServer;
+    std::shared_ptr<itc::test::Validator> mpValidator;
+    std::shared_ptr<ICalc> mpCalc;
+    std::shared_ptr<IClient> mpClient;
+    std::shared_ptr<Server> mpServer;
 };

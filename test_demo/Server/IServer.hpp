@@ -11,9 +11,9 @@ class IServer
 public:
     static const std::string THREAD_NAME;
 
-    virtual ~IServer(){};
+    virtual ~IServer() = default;
 
-    virtual void setClient(IClient* pClient) = 0;
+    virtual void setClient(std::shared_ptr<IClient> pClient) = 0;
 
     virtual void requestSum(int a, int b) = 0;
     virtual void requestFactorial(int a) = 0;

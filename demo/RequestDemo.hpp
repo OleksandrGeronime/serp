@@ -36,7 +36,7 @@ namespace ns_RequestDemo {
         };
     };
 
-    class PBAP
+    class PBAP: std::enable_shared_from_this<PBAP>
     {
     public:
         void request();
@@ -45,7 +45,7 @@ namespace ns_RequestDemo {
             std::cout << itc::currentThreadName() << ": " << "PBAP::onExecuteResponse(" << result << ")" << std::endl;
         }
 
-        DB db;
+        std::shared_ptr<DB> db;
     };
 }
 
@@ -54,7 +54,7 @@ DECLARE_REQUEST(REQUEST_execute, ns_RequestDemo::THREAD_DB, ns_RequestDemo::PBAP
 
 void ns_RequestDemo::PBAP::request()
 {
-    itc::invoke(REQUEST_execute::Request(&db, this, "SELECT * FROM DUAL;"));
+    itc::invoke(REQUEST_execute::Request(db, shared_from_this(), "SELECT * FROM DUAL;"));
 }
 
 class RequestDemo
@@ -68,7 +68,7 @@ void RequestDemo::run()
     itc::createEventLoop(ns_RequestDemo::THREAD_DB);
     itc::createEventLoop(ns_RequestDemo::THREAD_PBAP);
 
-    ns_RequestDemo::PBAP pbap;
+    auto pbap = std::shared_ptr<ns_RequestDemo::PBAP>();
 
-    itc::invoke(CALL_request::Call(&pbap));
+    itc::invoke(CALL_request::Call(pbap));
 }

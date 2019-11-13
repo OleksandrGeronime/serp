@@ -12,7 +12,7 @@ public:
     ICalc() = default;
     virtual ~ICalc() = default;
 
-    virtual void setConsumer(ICalcConsumer* pConsumer) = 0;
+    virtual void setConsumer(std::shared_ptr<ICalcConsumer> pConsumer) = 0;
 
     virtual void sum(int a, int b) = 0;
     virtual void multiply(int a, int b) = 0;

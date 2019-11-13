@@ -13,10 +13,10 @@ public:
     virtual ~Calc() = default;
 
     // ICalc
-    void setConsumer(ICalcConsumer* pConsumer) override;
+    void setConsumer(std::shared_ptr<ICalcConsumer> pConsumer) override;
     void sum(int a, int b) override;
     void multiply(int a, int b) override;
 
 private:
-    ICalcConsumer* mpConsumer;
+    std::shared_ptr<ICalcConsumer> mpConsumer;
 };

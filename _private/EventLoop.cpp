@@ -38,11 +38,6 @@ namespace itc {
             thread.detach();
         }
 
-        EventLoop::~EventLoop()
-        {
-            exitThread();
-        }
-
         std::thread::id EventLoop::getThreadId() const
         {
             return mThreadId;

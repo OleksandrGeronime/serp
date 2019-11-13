@@ -8,9 +8,9 @@
 class CalcStub: public ICalc
 {
 public:
-    CalcStub(itc::test::Validator* pValidator): mpValidator(pValidator){}
+    CalcStub(std::shared_ptr<itc::test::Validator> pValidator): mpValidator(pValidator){}
 
-    void setConsumer(ICalcConsumer* pConsumer) override{};
+    void setConsumer(std::shared_ptr<ICalcConsumer> pConsumer) override{};
     void sum(int a, int b) override{};
     void multiply(int a, int b) override
     {
@@ -20,5 +20,5 @@ public:
     };
 
 private:
-    itc::test::Validator* mpValidator;
+    std::shared_ptr<itc::test::Validator> mpValidator;
 };

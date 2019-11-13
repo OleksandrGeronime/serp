@@ -28,7 +28,7 @@ namespace itc {
         {
         public:
             EventLoop(const std::string& threadName);
-            ~EventLoop();
+            ~EventLoop() = default;
 
             void exitThread();
 

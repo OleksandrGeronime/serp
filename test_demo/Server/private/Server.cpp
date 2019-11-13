@@ -8,17 +8,12 @@
 
 const std::string IServer::THREAD_NAME = "SERVER";
 
-Server::Server(ICalc* pCalc)
+Server::Server(std::shared_ptr<ICalc> pCalc)
 : mpCalc(pCalc)
 {  
 }
 
-Server::~Server()
-{
-    delete mpCalc;
-}
-
-void Server::setClient(IClient* pClient)
+void Server::setClient(std::shared_ptr<IClient> pClient)
 {
     mpClient = pClient;
 }

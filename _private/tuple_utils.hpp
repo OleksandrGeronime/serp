@@ -8,6 +8,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 namespace tuple_utils {
 
@@ -61,19 +62,19 @@ namespace tuple_utils {
 
 
     template<typename Context, class... Args, int... Indexes > 
-    void apply_helper(Context* context, std::_Mem_fn<void (Context::*)(Args...)> pf, index_tuple< Indexes... >, std::tuple<Args...>&& tup) 
+    void apply_helper(std::shared_ptr<Context> context, std::_Mem_fn<void (Context::*)(Args...)> pf, index_tuple< Indexes... >, std::tuple<Args...>&& tup) 
     {
         pf(context, std::forward<Args>( std::get<Indexes>(tup))...);
     } 
 
     template<typename Context, class ... Args> 
-    void apply(Context* context, std::_Mem_fn<void (Context::*)(Args...)> pf, const std::tuple<Args...>&  tup)
+    void apply(std::shared_ptr<Context> context, std::_Mem_fn<void (Context::*)(Args...)> pf, const std::tuple<Args...>&  tup)
     {
         return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::tuple<Args...>(tup));
     }
 
     template<typename Context, class ... Args> 
-    void apply(Context* context, std::_Mem_fn<void (Context::*)(Args...)> pf, std::tuple<Args...>&&  tup)
+    void apply(std::shared_ptr<Context> context, std::_Mem_fn<void (Context::*)(Args...)> pf, std::tuple<Args...>&&  tup)
     {
         return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Args...>>(tup));
     }
@@ -84,19 +85,19 @@ namespace tuple_utils {
 
 
     template<typename Context, typename Ret, class... Args, int... Indexes > 
-    Ret apply_helper(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, index_tuple< Indexes... >, std::tuple<Args...>&& tup) 
+    Ret apply_helper(std::shared_ptr<Context> context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, index_tuple< Indexes... >, std::tuple<Args...>&& tup) 
     {
         return pf(context, std::forward<Args>( std::get<Indexes>(tup))...);
     } 
 
     template<typename Context, typename Ret, class ... Args> 
-    Ret apply(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, const std::tuple<Args...>&  tup)
+    Ret apply(std::shared_ptr<Context> context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, const std::tuple<Args...>&  tup)
     {
         return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::tuple<Args...>(tup));
     }
 
     template<typename Context, typename Ret, class ... Args> 
-    Ret apply(Context* context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, std::tuple<Args...>&&  tup)
+    Ret apply(std::shared_ptr<Context> context, std::_Mem_fn<Ret (Context::*)(Args...)> pf, std::tuple<Args...>&&  tup)
     {
         return apply_helper(context, pf, typename make_indexes<Args...>::type(), std::forward<std::tuple<Args...>>(tup));
     }

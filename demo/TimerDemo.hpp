@@ -25,14 +25,14 @@ namespace ns_TimerDemo {
     static const std::string THREAD_1 = "TimerDemo_thread_1";
     static const std::string THREAD_2 = "TimerDemo_thread_2";
 
-    class A1
+    class A1: public std::enable_shared_from_this<A1>
     {
     public:
         void startTimer();
         void onTimerEvent();
     };
 
-    class A2
+    class A2: public std::enable_shared_from_this<A2>
     {
     public:
         void startTimer();
@@ -51,7 +51,7 @@ DECLARE_EVENT(EVENT_A2_onTimer, ns_TimerDemo::A2, onTimerEvent)
 void ns_TimerDemo::A1::startTimer()
 {
     std::cout << itc::currentThreadName() << ": " << "A1::startTimer()" << std::endl;
-    auto& t =  itc::timer(EVENT_A1_onTimer::Event(this), std::chrono::seconds(3), true);
+    auto& t =  itc::timer(EVENT_A1_onTimer::Event(shared_from_this()), std::chrono::seconds(3), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A1::startTimer() t timerId=" << t.getId() << std::endl;
     t.start();
 }
@@ -63,11 +63,11 @@ void ns_TimerDemo::A2::startTimer()
 {
     std::cout << itc::currentThreadName() << ": " << "A1::startTimer()" << std::endl;
     
-    mpT1 = &itc::timer(EVENT_A2_onTimer::Event(this), std::chrono::milliseconds(500), true);
+    mpT1 = &itc::timer(EVENT_A2_onTimer::Event(shared_from_this()), std::chrono::milliseconds(500), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A2::startTimer() mpT1 timerId=" << mpT1->getId() << std::endl;
     mpT1->start();
     
-    mpT2 = &itc::timer(EVENT_A2_onTimer::Event(this), std::chrono::seconds(1), true);
+    mpT2 = &itc::timer(EVENT_A2_onTimer::Event(shared_from_this()), std::chrono::seconds(1), true);
     std::cout << itc::currentThreadName() << ": " << "ns_TimerDemo::A2::startTimer() mpT2 timerId=" << mpT2->getId() << std::endl;
     mpT2->start();
 }
@@ -105,8 +105,8 @@ void TimerDemo::run()
     itc::createEventLoop(ns_TimerDemo::THREAD_1);
     itc::createEventLoop(ns_TimerDemo::THREAD_2);
 
-    ns_TimerDemo::A1* a1 = new ns_TimerDemo::A1();
-    ns_TimerDemo::A2* a2 = new ns_TimerDemo::A2();
+    auto a1 = std::make_shared<ns_TimerDemo::A1>();
+    auto a2 = std::make_shared<ns_TimerDemo::A2>();
 
     itc::invoke(CALL_A1_startTimer::Call(a1));
     itc::invoke(CALL_A2_startTimer::Call(a2));

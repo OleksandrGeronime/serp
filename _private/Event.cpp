@@ -24,9 +24,5 @@ namespace itc {
                 , mPriority(priority)
                 , mpCallable(callable)
             {}
-
-            Event::~Event()
-            {
-            }
     }
 }

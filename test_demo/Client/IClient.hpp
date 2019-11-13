@@ -9,7 +9,7 @@ class IClient
 public:
     static const std::string THREAD_NAME;
 
-    virtual ~IClient(){};
+    virtual ~IClient() = default;
 
     virtual void responseSum(int response) = 0;
     virtual void responseFactorial(int response) = 0;

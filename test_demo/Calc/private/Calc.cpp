@@ -6,7 +6,7 @@
  
 const std::string ICalc::THREAD_NAME = "CALC";
 
-void Calc::setConsumer(ICalcConsumer* pConsumer)
+void Calc::setConsumer(std::shared_ptr<ICalcConsumer> pConsumer)
 {
     mpConsumer = pConsumer;
 }
