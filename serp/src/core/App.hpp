@@ -37,24 +37,24 @@ namespace serp
 
         static App &instance();
 
-        static const std::string UNKNOWN_THREAD_NAME;
+        static const std::string NON_EVENT_LOOP_THREAD;
 
         static void run();
         static void exit();
 
-        static void createEventLoop(
+        static void spawnEventLoop (
             const std::string &threadName,
             const std::chrono::milliseconds &timeout = std::chrono::milliseconds(1000));
 
         static void stopEventLoop(const std::string &threadName);
 
-        static const std::string &currentThreadName();
+        static const std::string &threadName();
 
         static void invoke(const std::string &threadName,
                            const std::shared_ptr<Invokable> &callable);
 
-        std::shared_ptr<EventLoop> processorByName(const std::string &name) const;
-        std::shared_ptr<EventLoop> processorById(const std::thread::id &id) const;
+        std::shared_ptr<EventLoop> getLoopByName(const std::string &name) const;
+        std::shared_ptr<EventLoop> getLoopById(const std::thread::id &id) const;
 
         std::shared_ptr<Watchdog> watchdog() const { return _watchdog; }
 

@@ -1,102 +1,102 @@
 #pragma once
 
-#include <cstdint>
-#include <ostream>
-#include <sstream>
+#include <memory>
 #include <string>
 #include <tuple>
+#include <sstream>
+#include <utility>
+
+#include "Loggable.hpp"
+#include "LogManager.hpp"
 
 namespace serp
 {
 
-    // Defines log severity levels.
-    enum class eLogLevel : uint8_t
+    inline std::unique_ptr<LogWriter> logVerbose()
     {
-        fatal,
-        error,
-        warn,
-        info,
-        debug,
-        verbose,
-        off
-    };
-
-    // Controls whether to log request/response parameters.
-    enum class LoggingType : uint8_t
-    {
-        ENABLE,
-        DISABLE,
-        WITHOUT_PARAMS
-    };
-
-    // Dummy logging streams to suppress output during stubbing.
-    inline std::ostream &logVerbose()
-    {
-        static std::ostringstream _dummy_stream;
-        return _dummy_stream;
+        return std::make_unique<LogWriter>(
+            LogManager::getInstance().threadName(), "", eLogLevel::verbose);
     }
 
-    inline std::ostream &logDebug()
+    inline std::unique_ptr<LogWriter> logDebug()
     {
-        static std::ostringstream _dummy_stream;
-        return _dummy_stream;
+        return std::make_unique<LogWriter>(
+            LogManager::getInstance().threadName(), "", eLogLevel::debug);
     }
 
-    inline std::ostream &logInfo()
+    inline std::unique_ptr<LogWriter> logInfo()
     {
-        static std::ostringstream _dummy_stream;
-        return _dummy_stream;
+        return std::make_unique<LogWriter>(
+            LogManager::getInstance().threadName(), "", eLogLevel::info);
     }
 
-    inline std::ostream &logWarn()
+    inline std::unique_ptr<LogWriter> logWarn()
     {
-        static std::ostringstream _dummy_stream;
-        return _dummy_stream;
+        return std::make_unique<LogWriter>(
+            LogManager::getInstance().threadName(), "", eLogLevel::warn);
     }
 
-    inline std::ostream &logError()
+    inline std::unique_ptr<LogWriter> logError()
     {
-        static std::ostringstream _dummy_stream;
-        return _dummy_stream;
+        return std::make_unique<LogWriter>(
+            LogManager::getInstance().threadName(), "", eLogLevel::error);
     }
 
-    // Logs entry into a method without parameters.
-    inline void logMethod(const std::string &method_name)
+    template <typename... Args>
+    inline void itcLog(eLogLevel level,
+                       const std::string &senderThreadName,
+                       const std::string &receiverThreadName,
+                       const std::string &classAndMethodName,
+                       const std::tuple<Args...> &args,
+                       bool isResponse = false)
     {
-        [[maybe_unused]] const auto &_name = method_name;
+        LogManager::getInstance().itcLog(
+            level, senderThreadName, receiverThreadName, classAndMethodName, args, isResponse);
     }
 
-    // Logs entry into a method with parameters (variadic).
+    inline void logMethod(const std::string &methodName)
+    {
+        LogManager::logMethod(methodName);
+    }
+
     template <typename Arg, typename... Args>
-    void logMethod(const std::string &method_name, Arg &&arg, Args &&...args)
+    inline void logMethod(const std::string &methodName, Arg &&arg, Args &&...args)
     {
-        [[maybe_unused]] const auto &_name = method_name;
-        [[maybe_unused]] const auto &_args = std::forward_as_tuple(std::forward<Arg>(arg), std::forward<Args>(args)...);
+        LogManager::logMethod(methodName, std::forward<Arg>(arg), std::forward<Args>(args)...);
     }
 
-    // Logs entry into a method where method name is passed as stringstream.
     template <typename Arg, typename... Args>
-    void logMethod(const std::stringstream &method_name, Arg &&arg, Args &&...args)
+    inline void logMethod(const std::stringstream &methodName, Arg &&arg, Args &&...args)
     {
-        [[maybe_unused]] const auto &_name = method_name;
-        [[maybe_unused]] const auto &_args = std::forward_as_tuple(std::forward<Arg>(arg), std::forward<Args>(args)...);
+        LogManager::logMethod(methodName.str(), std::forward<Arg>(arg), std::forward<Args>(args)...);
     }
 
-    // Generic logger for requests and responses (stub).
-    template <class... Args>
-    void itcLog(const eLogLevel &level,
-                const std::string &sender_thread_name,
-                const std::string &receiver_thread_name,
-                const std::string &class_and_method_name,
-                const std::tuple<Args...> &args,
-                bool is_response = false)
+    namespace logger
     {
-        [[maybe_unused]] const auto &_lvl = level;
-        [[maybe_unused]] const auto &_from = sender_thread_name;
-        [[maybe_unused]] const auto &_to = receiver_thread_name;
-        [[maybe_unused]] const auto &_method = class_and_method_name;
-        [[maybe_unused]] const auto &_args = args;
-        [[maybe_unused]] const auto _resp = is_response;
-    }
+
+        template <typename T>
+        inline void addStrategy()
+        {
+            LogManager::getInstance().registerStrategy(std::make_shared<T>());
+        }
+
+        template <typename T, typename... Args>
+        inline void addStrategy(Args &&...args)
+        {
+            LogManager::getInstance().registerStrategy(std::make_shared<T>(std::forward<Args>(args)...));
+        }
+
+        inline void clearStrategies()
+        {
+            LogManager::getInstance().clearStrategies();
+        }
+
+    } // namespace logger
 
 } // namespace serp
+
+extern "C" void logVerbose(const char *fmt, ...);
+extern "C" void logDebug(const char *fmt, ...);
+extern "C" void logInfo(const char *fmt, ...);
+extern "C" void logWarn(const char *fmt, ...);
+extern "C" void logError(const char *fmt, ...);

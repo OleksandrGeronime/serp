@@ -10,13 +10,13 @@
 namespace serp
 {
 
-    const std::string App::UNKNOWN_THREAD_NAME = "UNKNOWN";
+    const std::string App::NON_EVENT_LOOP_THREAD = "ext";
 
     App::WatchdogException::WatchdogException(const std::thread::id &threadId)
         : _message{}
     {
-        const auto ep = App::instance().processorById(threadId);
-        const auto &name = ep ? ep->getThreadName() : UNKNOWN_THREAD_NAME;
+        const auto ep = App::instance().getLoopById(threadId);
+        const auto &name = ep ? ep->getThreadName() : NON_EVENT_LOOP_THREAD;
 
         std::ostringstream oss;
         oss << "Thread " << name << " (" << threadId << ") timeout";
@@ -55,14 +55,12 @@ namespace serp
         instance()._watchdog->stop();
     }
 
-    void App::createEventLoop(const std::string &threadName,
-                              const std::chrono::milliseconds &timeout)
+    void App::spawnEventLoop(const std::string &threadName,
+                             const std::chrono::milliseconds &timeout)
     {
-        serp::logMethod("App::createEventLoop", threadName);
-
+        serp::logMethod("App::spawnEventLoop ", threadName);
         const auto ep = std::make_shared<EventLoop>(
             threadName, instance()._watchdog, timeout);
-
         instance().registerProcessor(ep);
     }
 
@@ -70,7 +68,7 @@ namespace serp
     {
         serp::logMethod("App::stopEventLoop", threadName);
 
-        const auto ep = instance().processorByName(threadName);
+        const auto ep = instance().getLoopByName(threadName);
         if (!ep)
         {
             logError() << "Unknown thread: " << threadName;
@@ -81,16 +79,16 @@ namespace serp
         ep->stop();
     }
 
-    const std::string &App::currentThreadName()
+    const std::string &App::threadName()
     {
-        const auto ep = instance().processorById(std::this_thread::get_id());
-        return ep ? ep->getThreadName() : UNKNOWN_THREAD_NAME;
+        const auto ep = instance().getLoopById(std::this_thread::get_id());
+        return ep ? ep->getThreadName() : NON_EVENT_LOOP_THREAD;
     }
 
     void App::invoke(const std::string &threadName,
                      const std::shared_ptr<Invokable> &callable)
     {
-        const auto ep = instance().processorByName(threadName);
+        const auto ep = instance().getLoopByName(threadName);
         if (!ep)
         {
             logError() << "invoke() failed. Unknown thread name: " << threadName;
@@ -100,14 +98,14 @@ namespace serp
         ep->push(callable);
     }
 
-    std::shared_ptr<EventLoop> App::processorById(const std::thread::id &id) const
+    std::shared_ptr<EventLoop> App::getLoopById(const std::thread::id &id) const
     {
         std::unique_lock lock(_lock);
         const auto it = _processors.find(id);
         return (it != _processors.end()) ? it->second : nullptr;
     }
 
-    std::shared_ptr<EventLoop> App::processorByName(const std::string &name) const
+    std::shared_ptr<EventLoop> App::getLoopByName(const std::string &name) const
     {
         std::unique_lock lock(_lock);
         const auto it = std::find_if(

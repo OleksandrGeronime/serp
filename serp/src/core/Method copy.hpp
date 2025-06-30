@@ -1,5 +1,6 @@
 #pragma once
 
+// #include "console.h"
 #include "Call.hpp"
 #include "Promise.hpp"
 #include "Request.hpp"
@@ -52,6 +53,16 @@ namespace serp
                      const std::string &threadName = Context::THREAD)
                     : mContext{pContext}, mName{name}, mThreadName{threadName}, mLoggingType{loggingType}
                 {
+                    // Console::sCommandMap[mName] = [this](const std::vector<std::string> &args) -> std::string {
+                    //     return callWithParsedArgs<Args...>(
+                    //         [this](Args... unpacked) -> std::string {
+                    //             auto result = (*this)(unpacked...);
+                    //             std::ostringstream oss;
+                    //             oss << result->getValue();
+                    //             return oss.str();
+                    //         },
+                    //         args);
+                    // };
                 }
 
                 ~Bind() = default;
@@ -90,13 +101,23 @@ namespace serp
             struct Out final
             {
                 template <typename Context, void (Context::*func)(std::shared_ptr<Response<Ret>>, Args...)>
-                struct Bind
+                struct Bind 
                 {
                     Bind(Context *const pContext, const std::string &name = "defaultName",
                          const LoggingType loggingType = LoggingType::ENABLE,
                          const std::string &threadName = Context::THREAD)
                         : mContext{pContext}, mName{name}, mThreadName{threadName}, mLoggingType{loggingType}
                     {
+                        // Console::sCommandMap[mName] = [this](const std::vector<std::string> &args) -> std::string {
+                        //     return callWithParsedArgs<Args...>(
+                        //         [this](Args... unpacked) -> std::string {
+                        //             auto result = (*this)(unpacked...);
+                        //             std::ostringstream oss;
+                        //             oss << result->getValue();
+                        //             return oss.str();
+                        //         },
+                        //         args);
+                        // };
                     }
 
                     ~Bind() = default;

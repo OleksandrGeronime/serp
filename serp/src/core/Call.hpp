@@ -31,14 +31,14 @@ namespace serp
             switch (_loggingType)
             {
             case LoggingType::ENABLE:
-                itcLog(eLogLevel::info, _senderThreadName, App::currentThreadName(),
+                itcLog(eLogLevel::info, _senderThreadName, App::threadName(),
                        _methodName, _params);
                 break;
             case LoggingType::DISABLE:
                 // No logging
                 break;
             case LoggingType::WITHOUT_PARAMS:
-                itcLog(eLogLevel::info, _senderThreadName, App::currentThreadName(),
+                itcLog(eLogLevel::info, _senderThreadName, App::threadName(),
                        _methodName, {});
                 break;
             }

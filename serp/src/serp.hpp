@@ -7,4 +7,8 @@
 #include "core/Service.hpp"
 #include "core/SyncMethod.hpp"
 #include "core/Timer.hpp"
+
 #include "logger/Logger.hpp"
+#include "logger/Dumpers.hpp"
+#include "logger/strategies/LogStrategyConsole.hpp"
+#include "logger/strategies/LogStrategyFile.hpp"

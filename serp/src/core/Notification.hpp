@@ -49,7 +49,7 @@ namespace serp
         /// Connects a listener, returns its subscription ID
         uint32_t connect(std::function<void(Args...)> callback)
         {
-            const std::string thread = App::currentThreadName();
+            const std::string thread = App::threadName();
 
             uint32_t id;
             {
@@ -75,11 +75,11 @@ namespace serp
         /// Sends notification to all listeners
         void broadcast(const Args &...args)
         {
-            if (App::currentThreadName() != _ownerThread &&
+            if (App::threadName() != _ownerThread &&
                 _ownerThread == _interface)
             {
                 logError() << "Notification is allowed only from thread '" << _ownerThread
-                           << "', but called from '" << App::currentThreadName() << "'";
+                           << "', but called from '" << App::threadName() << "'";
                 return;
             }
 
@@ -92,9 +92,9 @@ namespace serp
             for (const auto &[id, sub] : copy)
             {
                 std::string targetThread = !sub.thread.empty() &&
-                                                   sub.thread != App::UNKNOWN_THREAD_NAME
+                                                   sub.thread != App::NON_EVENT_LOOP_THREAD
                                                ? sub.thread
-                                               : App::currentThreadName();
+                                               : App::threadName();
 
                 logEvent(targetThread, args...);
                 dispatch(targetThread, sub.handler, args...);
@@ -110,12 +110,12 @@ namespace serp
     private:
         void logConnection(bool connecting, uint32_t id) const
         {
-            const std::string &current = App::currentThreadName();
+            const std::string &current = App::threadName();
             const std::string direction = connecting ? "_subscribe" : "_unsubscribe";
             std::string logName = "N_" + _name + direction;
             std::string idStr = std::to_string(id);
 
-            const bool isServer = App::instance().processorById(std::this_thread::get_id()) != nullptr;
+            const bool isServer = App::instance().getLoopById(std::this_thread::get_id()) != nullptr;
 
             if (isServer)
             {
@@ -131,7 +131,7 @@ namespace serp
         void logEvent(const std::string &receiver, const Ts &...args) const
         {
             std::string logName = "N_" + _name;
-            const bool isServer = App::instance().processorById(std::this_thread::get_id()) != nullptr;
+            const bool isServer = App::instance().getLoopById(std::this_thread::get_id()) != nullptr;
 
             if (isServer)
             {

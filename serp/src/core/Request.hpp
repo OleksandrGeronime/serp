@@ -37,10 +37,10 @@ namespace serp
             switch (base._logging_type)
             {
             case LoggingType::ENABLE:
-                itcLog(eLogLevel::info, log_source, App::currentThreadName(), log_method, base._params);
+                itcLog(eLogLevel::info, log_source, App::threadName(), log_method, base._params);
                 break;
             case LoggingType::WITHOUT_PARAMS:
-                itcLog(eLogLevel::info, log_source, App::currentThreadName(), log_method, {});
+                itcLog(eLogLevel::info, log_source, App::threadName(), log_method, {});
                 break;
             case LoggingType::DISABLE:
             default:

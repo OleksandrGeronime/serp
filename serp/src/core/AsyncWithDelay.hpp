@@ -13,7 +13,7 @@ namespace serp
     public:
         AsyncWithDelay(const std::chrono::milliseconds &delay,
                        const std::function<void(Args...)> &fn, Args &&...args)
-            : AsyncWithDelay(App::currentThreadName(), delay, fn, std::forward<Args>(args)...) {}
+            : AsyncWithDelay(App::threadName(), delay, fn, std::forward<Args>(args)...) {}
 
         AsyncWithDelay(const std::string &thread,
                        const std::chrono::milliseconds &delay,

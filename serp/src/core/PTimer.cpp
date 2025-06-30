@@ -18,7 +18,7 @@ namespace serp
 
     PTimer::~PTimer()
     {
-        const auto EventLoop = App::instance().processorById(std::this_thread::get_id());
+        const auto EventLoop = App::instance().getLoopById(std::this_thread::get_id());
         if (EventLoop)
         {
             EventLoop->removeTimer(_id);
@@ -46,7 +46,7 @@ namespace serp
     {
         _started = false;
 
-        const auto EventLoop = App::instance().processorById(std::this_thread::get_id());
+        const auto EventLoop = App::instance().getLoopById(std::this_thread::get_id());
         if (EventLoop)
         {
             EventLoop->sortTimers();
@@ -63,7 +63,7 @@ namespace serp
         _startTime = std::chrono::steady_clock::now();
         _started = true;
 
-        const auto EventLoop = App::instance().processorById(std::this_thread::get_id());
+        const auto EventLoop = App::instance().getLoopById(std::this_thread::get_id());
         if (EventLoop)
         {
             EventLoop->sortTimers();

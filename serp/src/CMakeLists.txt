@@ -19,6 +19,16 @@ set(SERP_SOURCES
     core/PTimer.cpp
     core/Watchdog.cpp
     core/Service.cpp
+
+    logger/types.cpp
+    logger/Dumpers.cpp
+    logger/Logger.cpp
+    logger/LogManager.cpp
+    logger/LogTag.cpp
+    logger/LogWriter.cpp
+    logger/strategies/LogStrategyCommon.cpp
+    logger/strategies/LogStrategyConsole.cpp
+    logger/strategies/LogStrategyFile.cpp
 )
 
 # Create static/shared library
