@@ -20,7 +20,7 @@ namespace serp
             return nullptr;
         }
 
-        const auto ep = App::instance().processorById(std::this_thread::get_id());
+        const auto ep = App::instance().getLoopById(std::this_thread::get_id());
         if (!ep)
         {
             serp::logError() << "Timer::create: no EventLoop found for thread " << std::this_thread::get_id();

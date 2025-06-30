@@ -11,7 +11,7 @@ namespace serp
         Async(const std::function<void(Args...)> &fn, const Args &&...args)
         {
             App::invoke(
-                App::currentThreadName(),
+                App::threadName(),
                 std::make_shared<Event<Args...>>(fn, std::make_tuple(std::forward<const Args>(args)...)));
         }
 

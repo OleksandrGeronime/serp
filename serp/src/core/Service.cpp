@@ -15,8 +15,7 @@ namespace serp
           Init{this, "Service::init", LoggingType::ENABLE, threadName}
     {
         logMethod("Service::Service", threadName, watchdogTimeout);
-
-        App::createEventLoop(mThreadName, watchdogTimeout);
+        App::spawnEventLoop (mThreadName, watchdogTimeout);
     }
 
     Service::~Service()

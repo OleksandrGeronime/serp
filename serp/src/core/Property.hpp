@@ -45,7 +45,7 @@ public:
     Property& operator=(Property&&) = delete;
 
     Property& operator=(const Type& val) {
-        const auto& current = App::currentThreadName();
+        const auto& current = App::threadName();
         if (current != _ownerThread && _ownerThread == _interface) {
             logError() << "Attempt to assign from thread '" << current
                        << "' to Property owned by '" << _ownerThread << "'";
@@ -59,7 +59,7 @@ public:
     }
 
     operator Type() {
-        if (App::currentThreadName() != _ownerThread) {
+        if (App::threadName() != _ownerThread) {
             std::lock_guard guard(_lock);
             return _value;
         }
@@ -85,17 +85,17 @@ public:
         msg << "assigned id = " << id;
 
         const auto& threadId = std::this_thread::get_id();
-        const bool serverSide = App::instance().processorById(threadId) != nullptr;
+        const bool serverSide = App::instance().getLoopById(threadId) != nullptr;
 
         if (serverSide) {
-            itcLog(eLogLevel::info, App::currentThreadName(), _interface,
+            itcLog(eLogLevel::info, App::threadName(), _interface,
                    "A_" + _name + "_subscribe", std::make_tuple(msg.str()));
         } else {
             itcLog(eLogLevel::info, _interface, _ownerThread,
                    "A_" + _name + "_subscribe", std::make_tuple(msg.str()));
         }
 
-        _subscribers.emplace(id, Subscription(App::currentThreadName(), std::move(cb)));
+        _subscribers.emplace(id, Subscription(App::threadName(), std::move(cb)));
         return id;
     }
 
@@ -103,10 +103,10 @@ public:
         std::lock_guard guard(_lock);
 
         const auto& threadId = std::this_thread::get_id();
-        const bool serverSide = App::instance().processorById(threadId) != nullptr;
+        const bool serverSide = App::instance().getLoopById(threadId) != nullptr;
 
         if (serverSide) {
-            itcLog(eLogLevel::info, App::currentThreadName(), _interface,
+            itcLog(eLogLevel::info, App::threadName(), _interface,
                    "A_" + _name + "_unsubscribe", std::make_tuple(id));
         } else {
             itcLog(eLogLevel::info, _interface, _ownerThread,
@@ -120,12 +120,12 @@ private:
     void broadcast() {
         for (const auto& [id, subscriber] : _subscribers) {
             std::string destination = subscriber.thread.empty() || 
-                                      subscriber.thread == App::UNKNOWN_THREAD_NAME
-                                      ? App::currentThreadName()
+                                      subscriber.thread == App::NON_EVENT_LOOP_THREAD
+                                      ? App::threadName()
                                       : subscriber.thread;
 
             const auto& threadId = std::this_thread::get_id();
-            const bool serverSide = App::instance().processorById(threadId) != nullptr;
+            const bool serverSide = App::instance().getLoopById(threadId) != nullptr;
 
             if (serverSide) {
                 itcLog(eLogLevel::info, _interface, destination, "A_" + _name,

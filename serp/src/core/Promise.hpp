@@ -55,7 +55,7 @@ namespace serp
 
             {
                 std::unique_lock<std::mutex> lock(this->_mutex);
-                _request_thread = App::currentThreadName();
+                _request_thread = App::threadName();
                 _cancel_func = std::move(cancel_func);
                 was_canceled = _canceled;
                 _canceled = false;

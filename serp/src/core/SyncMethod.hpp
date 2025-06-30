@@ -43,12 +43,12 @@ namespace serp
                         switch (_logging_type)
                         {
                         case LoggingType::ENABLE:
-                            itcLog(eLogLevel::info, App::currentThreadName(),
+                            itcLog(eLogLevel::info, App::threadName(),
                                    Context::INTERFACE, _name,
                                    std::make_tuple<Args...>(std::forward<Args>(args)...));
                             break;
                         case LoggingType::WITHOUT_PARAMS:
-                            itcLog(eLogLevel::info, App::currentThreadName(),
+                            itcLog(eLogLevel::info, App::threadName(),
                                    Context::INTERFACE, _name, {});
                             break;
                         case LoggingType::DISABLE:
@@ -62,12 +62,12 @@ namespace serp
                         switch (_logging_type)
                         {
                         case LoggingType::ENABLE:
-                            itcLog(eLogLevel::info, App::currentThreadName(),
+                            itcLog(eLogLevel::info, App::threadName(),
                                    Context::INTERFACE, _name,
                                    std::make_tuple<Ret>(result), true);
                             break;
                         case LoggingType::WITHOUT_PARAMS:
-                            itcLog(eLogLevel::info, App::currentThreadName(),
+                            itcLog(eLogLevel::info, App::threadName(),
                                    Context::INTERFACE, _name, {}, true);
                             break;
                         case LoggingType::DISABLE:
@@ -111,12 +111,12 @@ namespace serp
                             switch (_logging_type)
                             {
                             case LoggingType::ENABLE:
-                                itcLog(eLogLevel::info, App::currentThreadName(),
+                                itcLog(eLogLevel::info, App::threadName(),
                                        Context::INTERFACE, _name,
                                        std::make_tuple<Args...>(std::forward<Args>(args)...));
                                 break;
                             case LoggingType::WITHOUT_PARAMS:
-                                itcLog(eLogLevel::info, App::currentThreadName(),
+                                itcLog(eLogLevel::info, App::threadName(),
                                        Context::INTERFACE, _name, {});
                                 break;
                             case LoggingType::DISABLE:
@@ -130,12 +130,12 @@ namespace serp
                             switch (_logging_type)
                             {
                             case LoggingType::ENABLE:
-                                itcLog(eLogLevel::info, App::currentThreadName(),
+                                itcLog(eLogLevel::info, App::threadName(),
                                        Context::INTERFACE, _name,
                                        std::make_tuple<Ret>(result), true);
                                 break;
                             case LoggingType::WITHOUT_PARAMS:
-                                itcLog(eLogLevel::info, App::currentThreadName(),
+                                itcLog(eLogLevel::info, App::threadName(),
                                        Context::INTERFACE, _name, {}, true);
                                 break;
                             case LoggingType::DISABLE:
@@ -171,12 +171,12 @@ namespace serp
                     switch (_logging_type)
                     {
                     case LoggingType::ENABLE:
-                        itcLog(eLogLevel::info, App::currentThreadName(),
+                        itcLog(eLogLevel::info, App::threadName(),
                                Context::INTERFACE, _name,
                                std::make_tuple<Args...>(std::forward<Args>(args)...));
                         break;
                     case LoggingType::WITHOUT_PARAMS:
-                        itcLog(eLogLevel::info, App::currentThreadName(),
+                        itcLog(eLogLevel::info, App::threadName(),
                                Context::INTERFACE, _name, {});
                         break;
                     case LoggingType::DISABLE:
@@ -189,11 +189,11 @@ namespace serp
                     switch (_logging_type)
                     {
                     case LoggingType::ENABLE:
-                        itcLog(eLogLevel::info, App::currentThreadName(),
+                        itcLog(eLogLevel::info, App::threadName(),
                                Context::INTERFACE, _name, std::make_tuple<>(), true);
                         break;
                     case LoggingType::WITHOUT_PARAMS:
-                        itcLog(eLogLevel::info, App::currentThreadName(),
+                        itcLog(eLogLevel::info, App::threadName(),
                                Context::INTERFACE, _name, {}, true);
                         break;
                     case LoggingType::DISABLE:

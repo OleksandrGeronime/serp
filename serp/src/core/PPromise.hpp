@@ -53,7 +53,7 @@ namespace serp
         {
             std::unique_lock<std::mutex> lock(_mutex);
 
-            if (_response_thread == App::UNKNOWN_THREAD_NAME)
+            if (_response_thread == App::NON_EVENT_LOOP_THREAD)
             {
                 logError() << "PPromise::subscribe must be called from App thread";
                 return 0;
@@ -144,7 +144,7 @@ namespace serp
                     auto logged_value = _value;
                     itcLog(eLogLevel::info,
                            thread_name,
-                           App::currentThreadName(),
+                           App::threadName(),
                            _method_name + "<" + std::to_string(_request_id) + ">",
                            std::make_tuple<Value>(std::move(logged_value)),
                            true);
@@ -153,7 +153,7 @@ namespace serp
                 case LoggingType::WITHOUT_PARAMS:
                     itcLog(eLogLevel::info,
                            thread_name,
-                           App::currentThreadName(),
+                           App::threadName(),
                            _method_name + "<" + std::to_string(_request_id) + ">",
                            std::make_tuple<std::string>("value"),
                            true);
