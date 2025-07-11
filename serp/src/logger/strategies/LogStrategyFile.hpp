@@ -25,7 +25,7 @@ namespace serp
         void init() override;
 
         void log(const eLogLevel &level,
-                 const std::string &prefix,
+                 const std::string &tag,
                  const std::string &message) override;
 
         void itcLog(const eLogLevel &level,
@@ -40,7 +40,7 @@ namespace serp
         void _rotateLogFile();
         void _readConfigFromJson(const std::filesystem::path &filename);
         static void _cleanupOldFiles(const std::filesystem::path &path,
-                                     const std::string &prefix,
+                                     const std::string &tag,
                                      size_t maxFiles);
 
         size_t _fileSizeLimit;

@@ -30,7 +30,7 @@ namespace serp
 
         void log(const std::string &threadId,
                  const eLogLevel &level,
-                 const std::string &prefix,
+                 const std::string &tag,
                  const std::string &message);
 
         void registerStrategy(const std::shared_ptr<ILogStrategy> &strategy);
@@ -39,7 +39,7 @@ namespace serp
         static const std::string &threadName();
 
         static void logMethod(const std::string &methodName);
-        static void logMethod(const LogTag &prefix, const std::string &methodName);
+        static void logMethod(const LogTag &tag, const std::string &methodName);
 
         template <typename Arg, typename... Args>
         static void logMethod(const std::string &methodName, Arg &&arg, Args &&...args)
@@ -54,11 +54,11 @@ namespace serp
         }
 
         template <typename Arg, typename... Args>
-        static void logMethod(const LogTag &prefix, const std::string &methodName, Arg &&arg, Args &&...args)
+        static void logMethod(const LogTag &tag, const std::string &methodName, Arg &&arg, Args &&...args)
         {
             auto stream = std::make_unique<LogWriter>(
                 LogManager::getInstance().threadName(),
-                prefix.getTag(), eLogLevel::info);
+                tag.getTag(), eLogLevel::info);
 
             *stream << methodName << "(" << std::forward<Arg>(arg);
             (..., (*stream << ", " << std::forward<Args>(args)));

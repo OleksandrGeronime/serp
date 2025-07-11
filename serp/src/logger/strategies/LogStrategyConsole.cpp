@@ -27,7 +27,7 @@ namespace serp
         std::cout.setf(std::ios::fixed, std::ios::floatfield);
     }
 
-    void LogStrategyConsole::log(const eLogLevel &level, const std::string &prefix,
+    void LogStrategyConsole::log(const eLogLevel &level, const std::string &tag,
                                  const std::string &message)
     {
         const std::unique_lock lock(_mutex);
@@ -58,7 +58,7 @@ namespace serp
         }
 
         std::cout << color << level << " [" << serp::App::threadName() << "] "
-                  << prefix << message << RESET << std::endl;
+                  << tag << message << RESET << std::endl;
     }
 
     void LogStrategyConsole::itcLog(const eLogLevel &level,

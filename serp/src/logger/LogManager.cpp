@@ -14,7 +14,7 @@ namespace serp
 
     void LogManager::log(const std::string &threadId,
                          const eLogLevel &level,
-                         const std::string &prefix,
+                         const std::string &tag,
                          const std::string &message)
     {
         (void)threadId;
@@ -22,7 +22,7 @@ namespace serp
         const std::lock_guard<std::mutex> lock(_mutex);
         for (const auto &strategy : _strategies)
         {
-            strategy->log(level, prefix, message);
+            strategy->log(level, tag, message);
         }
     }
 
@@ -51,11 +51,11 @@ namespace serp
         *logStream << methodName << "()";
     }
 
-    void LogManager::logMethod(const LogTag &prefix,
+    void LogManager::logMethod(const LogTag &tag,
                                const std::string &methodName)
     {
         auto logStream = std::make_unique<LogWriter>(
-            threadName(), prefix.getTag(), eLogLevel::info);
+            threadName(), tag.getTag(), eLogLevel::info);
         *logStream << methodName << "()";
     }
 

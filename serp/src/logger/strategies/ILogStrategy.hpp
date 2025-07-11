@@ -17,7 +17,7 @@ namespace serp
         virtual void init() = 0;
 
         virtual void log(const eLogLevel &level,
-                         const std::string &prefix,
+                         const std::string &tag,
                          const std::string &message) = 0;
 
         virtual void itcLog(const eLogLevel &level,
