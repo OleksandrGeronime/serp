@@ -4,13 +4,13 @@
 namespace serp
 {
 
-    LogWriter::LogWriter(const std::string &threadId, const std::string &prefix, const eLogLevel logLevel)
-        : _threadName(threadId), _prefix(prefix), _level(logLevel) {}
+    LogWriter::LogWriter(const std::string &threadId, const std::string &tag, const eLogLevel logLevel)
+        : _threadName(threadId), _tag(tag), _level(logLevel) {}
 
     LogWriter::LogWriter(LogWriter &&other) noexcept
         : _baseStream(std::move(other._baseStream)),
           _threadName(std::move(other._threadName)),
-          _prefix(std::move(other._prefix)),
+          _tag(std::move(other._tag)),
           _level(std::exchange(other._level, serp::eLogLevel::error)) {}
 
     LogWriter::~LogWriter() noexcept
@@ -47,7 +47,7 @@ namespace serp
                 break;
 #endif
 
-            LogManager::getInstance().log(_threadName, _level, _prefix, _baseStream.str());
+            LogManager::getInstance().log(_threadName, _level, _tag, _baseStream.str());
         } while (false);
     }
 
@@ -55,7 +55,7 @@ namespace serp
     {
         _baseStream.swap(other._baseStream);
         std::swap(_threadName, other._threadName);
-        std::swap(_prefix, other._prefix);
+        std::swap(_tag, other._tag);
         std::swap(_level, other._level);
         return *this;
     }

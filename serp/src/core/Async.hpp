@@ -8,19 +8,20 @@ namespace serp
     template <typename... Args>
     struct Async final
     {
-        Async(const std::function<void(Args...)> &fn, const Args &&...args)
+        template <typename... CallArgs>
+        Async(std::function<void(Args...)> fn, CallArgs &&...args)
         {
             App::invoke(
                 App::threadName(),
-                std::make_shared<Event<Args...>>(fn, std::make_tuple(std::forward<const Args>(args)...)));
+                std::make_shared<Event<Args...>>(std::move(fn), std::make_tuple(std::forward<CallArgs>(args)...)));
         }
 
-        Async(const std::string &thread,
-              const std::function<void(Args...)> &fn, const Args &&...args)
+        template <typename... CallArgs>
+        Async(const std::string &thread, std::function<void(Args...)> fn, CallArgs &&...args)
         {
             App::invoke(
                 thread,
-                std::make_shared<Event<Args...>>(fn, std::make_tuple(std::forward<const Args>(args)...)));
+                std::make_shared<Event<Args...>>(std::move(fn), std::make_tuple(std::forward<CallArgs>(args)...)));
         }
     };
 

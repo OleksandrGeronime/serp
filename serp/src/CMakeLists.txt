@@ -15,20 +15,27 @@ set(SERP_INCLUDE_DIRS
 set(SERP_SOURCES
     core/App.cpp
     core/EventLoop.cpp
-    core/Timer.cpp
     core/PTimer.cpp
-    core/Watchdog.cpp
     core/Service.cpp
+    core/Timer.cpp
+    core/Watchdog.cpp
 
-    logger/types.cpp
     logger/Dumpers.cpp
-    logger/Logger.cpp
     logger/LogManager.cpp
     logger/LogTag.cpp
+    logger/Logger.cpp
     logger/LogWriter.cpp
+    logger/types.cpp
     logger/strategies/LogStrategyCommon.cpp
     logger/strategies/LogStrategyConsole.cpp
     logger/strategies/LogStrategyFile.cpp
+
+    command/Command.cpp
+    command/CommandPool.cpp
+    command/CommandProcessor.cpp
+    command/CommandQueue.cpp
+    command/ICommand.cpp
+    command/LambdaCommand.cpp
 )
 
 # Create static/shared library

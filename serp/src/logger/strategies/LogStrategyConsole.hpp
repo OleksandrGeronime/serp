@@ -16,7 +16,7 @@ namespace serp
 
         void init() override;
 
-        void log(const eLogLevel &level, const std::string &prefix,
+        void log(const eLogLevel &level, const std::string &tag,
                  const std::string &message) override;
 
         void itcLog(const eLogLevel &level, const std::string &senderThreadName,

@@ -13,7 +13,7 @@ namespace serp
     class LogWriter
     {
     public:
-        LogWriter(const std::string &threadId, const std::string &prefix, eLogLevel logLevel);
+        LogWriter(const std::string &threadId, const std::string &tag, eLogLevel logLevel);
         LogWriter(LogWriter &&other) noexcept;
         LogWriter(const LogWriter &) = delete;
         LogWriter &operator=(const LogWriter &) = delete;
@@ -30,7 +30,7 @@ namespace serp
     private:
         std::ostringstream _baseStream;
         std::string _threadName;
-        std::string _prefix;
+        std::string _tag;
         eLogLevel _level;
     };
 

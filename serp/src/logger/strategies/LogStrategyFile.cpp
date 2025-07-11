@@ -61,7 +61,7 @@ namespace serp
     }
 
     void LogStrategyFile::log(const eLogLevel &level,
-                              const std::string &prefix,
+                              const std::string &tag,
                               const std::string &message)
     {
         {
@@ -74,12 +74,12 @@ namespace serp
 
             dumpDateTimePrefix(_fileStream);
             _fileStream << level << " [" << serp::App::threadName() << "] "
-                        << prefix << message << '\n';
+                        << tag << message << '\n';
             _fileStream.flush();
         }
 
         static constexpr size_t formatSymbolsCount = 44U;
-        size_t logSize = formatSymbolsCount + prefix.size() + message.size();
+        size_t logSize = formatSymbolsCount + tag.size() + message.size();
         _incSizeAndRotateLogFile(logSize);
     }
 
@@ -194,7 +194,7 @@ namespace serp
     }
 
     void LogStrategyFile::_cleanupOldFiles(const std::filesystem::path &path,
-                                           const std::string &prefix,
+                                           const std::string &tag,
                                            size_t maxFiles)
     {
         std::vector<std::filesystem::directory_entry> logFiles;
@@ -205,7 +205,7 @@ namespace serp
                 entry.path().extension() == ".log")
             {
                 const auto &filename = entry.path().filename().string();
-                if (filename.compare(0, prefix.size(), prefix) == 0)
+                if (filename.compare(0, tag.size(), tag) == 0)
                 {
                     logFiles.emplace_back(entry);
                 }

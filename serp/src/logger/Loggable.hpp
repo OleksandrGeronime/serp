@@ -15,8 +15,8 @@ namespace serp
         Loggable() = default;
         virtual ~Loggable() = default;
 
-        // Each subclass must define its log prefix
-        virtual std::string buildPrefix() const = 0;
+        // Each subclass must define its log tag
+        virtual std::string tag() const = 0;
 
         void link(const std::weak_ptr<Loggable> &parent)
         {
@@ -77,9 +77,9 @@ namespace serp
         {
             if (auto parent = _parent.lock())
             {
-                return parent->getFullPrefix() + buildPrefix() + "::";
+                return parent->getFullPrefix() + tag() + "::";
             }
-            return buildPrefix() + "::";
+            return tag() + "::";
         }
 
         std::weak_ptr<Loggable> _parent;
