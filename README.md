@@ -147,7 +147,10 @@ Building SERP as a public, reusable foundation for next-generation middleware �
 
 - ✅ Core runtime and service model
 - ✅ Universal thread-safe interface layer
-- ⏳ Logging system with auto-trace
+- ✅ Logging system with auto-trace
+- ✅ Commands mechanism
+- ✅ Demos of basic features
+- ⏳ Component test framework
 - ⏳ CLI + WebSocket simulation
 - ⏳ Interface adapters (FIDL, AIDL, CommonAPI)
 - ⏳ Test-to-diagram generation
