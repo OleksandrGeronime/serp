@@ -8,6 +8,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <cxxabi.h>
 
 namespace serp
 {
@@ -114,5 +115,15 @@ namespace serp
     std::ostream &operator<<(std::ostream &out, const std::chrono::seconds &val);
     std::ostream &operator<<(std::ostream &out, const std::runtime_error &err);
     std::ostream &operator<<(std::ostream &out, const log_bool &val);
+
+    // Utilities
+    inline std::string demangle(const char* name)
+    {
+        int status = 0;
+        char* demangled = abi::__cxa_demangle(name, nullptr, nullptr, &status);
+        std::string result = (status == 0 && demangled) ? demangled : name;
+        std::free(demangled);
+        return result;
+    }
 
 } // namespace serp
