@@ -45,4 +45,9 @@ namespace serp
     template <typename Ret>
     using ResponsePtr = std::shared_ptr<Response<Ret>>;
 
+    template <typename Ret>
+    std::ostream &operator<<(std::ostream &out, const Response<Ret> &resp) {
+        return out << "Response<" << demangle(typeid(Ret).name()) << ">";
+    }
+
 } // namespace serp
