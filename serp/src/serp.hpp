@@ -16,3 +16,5 @@
 #include "command/Command.hpp"
 #include "command/CommandProcessor.hpp"
 #include "command/LambdaCommand.hpp"
+
+#include "test_engine/TestRunner.hpp"

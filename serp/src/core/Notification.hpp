@@ -102,9 +102,10 @@ namespace serp
         }
 
         /// Shortcut for broadcast
-        void operator()(Args &&...args)
+        template <typename... CallArgs>
+        void operator()(CallArgs&&... args)
         {
-            broadcast(std::forward<Args>(args)...);
+            broadcast(std::forward<CallArgs>(args)...);
         }
 
     private:
