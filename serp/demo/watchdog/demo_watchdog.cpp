@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "serp.hpp"
 
 struct S1 : serp::Service

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "serp.hpp"
 
 struct S1 : serp::Service {
@@ -10,11 +8,10 @@ struct S1 : serp::Service {
     }
 
     void init(const std::function<void(Service::Status)> reply) override {
-        serp::logMethod("S1::init");
+        serp::logMethod("S1::init", reply);
 
         mTimer = serp::Timer::create(std::chrono::seconds(1U), true, [](const serp::TimerPtr& timer) {
-            std::cout << "S1::init.mTimer" << std::endl;
-            serp::logMethod("S1::init.mTimer");
+            serp::logMethod("S1::init.mTimer");//, timer);
         });
         mTimer->start();
 
@@ -22,8 +19,7 @@ struct S1 : serp::Service {
     }
 
     void deinit(const std::function<void(Service::Status)> reply) override {
-        std::cout << "S1::deinit" << std::endl;
-        serp::logMethod("S1::deinit");
+        serp::logMethod("S1::deinit", reply);
         
         mTimer->stop();
 
@@ -35,25 +31,15 @@ struct S1 : serp::Service {
 const std::string S1::THREAD = "S1T";
 
 int main() {
-    // serp::logger::addStrategy<serp::LogStrategyConsole>();
-
-    std::cout << "111" << std::endl;
-    serp::logInfo() << "main 0";
-
-    std::cout << "112 " << serp::App::instance().threadName() << std::endl;
+    serp::logger::addStrategy<serp::LogStrategyConsole>();
     
     auto s1 = std::make_shared<S1>();
 
-    serp::logInfo() << "main 1";
-
     s1->Init();
-
-    serp::logInfo() << "main 2";
-
-    std::cout << "run" << std::endl;
 
     serp::App::run();
 
     s1->destroy();
+
     return 0;
 }

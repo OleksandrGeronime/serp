@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "serp.hpp"
 
 class DemoCommand : public serp::Command
