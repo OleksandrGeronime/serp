@@ -143,6 +143,17 @@ Building SERP as a public, reusable foundation for next-generation middleware �
 
 ---
 
+## License
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+
+This project is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
+See the [LICENSE](LICENSE) file for details.
+
+© 2025 Oleksandr Geronime
+
+---
+
 ## 🧭 Roadmap
 
 - ✅ Core runtime and service model
@@ -150,7 +161,7 @@ Building SERP as a public, reusable foundation for next-generation middleware �
 - ✅ Logging system with auto-trace
 - ✅ Commands mechanism
 - ✅ Demos of basic features
-- ⏳ Component test framework
+- ✅ Component test framework
 - ⏳ CLI + WebSocket simulation
 - ⏳ Interface adapters (FIDL, AIDL, CommonAPI)
 - ⏳ Test-to-diagram generation
