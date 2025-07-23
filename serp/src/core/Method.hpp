@@ -14,11 +14,13 @@
  * language governing permissions and limitations under the License.
  */
 
- #pragma once
+#pragma once
 
 #include "Call.hpp"
 #include "Promise.hpp"
 #include "Request.hpp"
+
+#include "runtime/Runtime.hpp"
 
 namespace serp
 {
@@ -30,7 +32,10 @@ namespace serp
             Bind(Context *const pContext, const std::string &name = "defaultName",
                  const LoggingType loggingType = LoggingType::ENABLE,
                  const std::string &threadName = Context::THREAD)
-                : mContext(pContext), mName(name), mThreadName{threadName}, mLoggingType{loggingType} {}
+                : mContext(pContext), mName(name), mThreadName{threadName}, mLoggingType{loggingType}
+            {
+                Runtime::registerMethod(this, name);
+            }
 
             ~Bind() = default;
             Bind(const Bind &) = delete;
@@ -68,6 +73,7 @@ namespace serp
                      const std::string &threadName = Context::THREAD)
                     : mContext{pContext}, mName{name}, mThreadName{threadName}, mLoggingType{loggingType}
                 {
+                    Runtime::registerMethodOut(this, name);
                 }
 
                 ~Bind() = default;
@@ -113,6 +119,7 @@ namespace serp
                          const std::string &threadName = Context::THREAD)
                         : mContext{pContext}, mName{name}, mThreadName{threadName}, mLoggingType{loggingType}
                     {
+                        Runtime::registerMethodInOut<Bind<Context, func>, Args...>(this, name);
                     }
 
                     ~Bind() = default;
@@ -150,7 +157,10 @@ namespace serp
                 Bind(Context *const pContext, const std::string &name = "defaultName",
                      const LoggingType loggingType = LoggingType::ENABLE,
                      const std::string &threadName = Context::THREAD)
-                    : mContext(pContext), mName(name), mThreadName{threadName}, mLoggingType{loggingType} {}
+                    : mContext(pContext), mName(name), mThreadName{threadName}, mLoggingType{loggingType}
+                {
+                    Runtime::registerMethodIn<Bind<Context, func>, Args...>(this, name);
+                }
 
                 ~Bind() = default;
                 Bind(const Bind &) = delete;

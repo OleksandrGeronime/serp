@@ -20,6 +20,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(test_engine)
 
+add_subdirectory(runtime)
+
 set(SERP_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${BOOST_INCLUDE_DIR}
@@ -59,5 +61,5 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC pthread
-    PUBLIC test_engine
+    PUBLIC test_engine runtime_engine
 )
