@@ -57,8 +57,9 @@ namespace serp
                 if (it != serp::Runtime::sMethodMap.end())
                 {
                     auto response = it->second(args);
-                    std::this_thread::sleep_for(std::chrono::microseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     std::cout << "[OK] Response: " << response << std::endl;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
                 else
                 {

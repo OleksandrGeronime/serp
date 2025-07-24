@@ -16,6 +16,8 @@
 
 #include "serp.hpp"
 
+#include "runtime/RuntimeConsole.hpp"
+
 struct S1 : public serp::Service
 {
     static const std::string THREAD;
@@ -79,80 +81,28 @@ struct S1 : public serp::Service
 const std::string S1::THREAD = "S1T";
 const std::string S1::INTERFACE = "S1T";
 
-struct S2 : public serp::Service
-{
-    static const std::string THREAD;
-    static const std::string INTERFACE;
-
-    S2(std::shared_ptr<S1> s1) : serp::Service("S2T", std::chrono::milliseconds{2000}), mS1{s1}
-    {
-        serp::logMethod("S2::S2");
-    }
-
-    virtual ~S2()
-    {
-        serp::logMethod("S2::~S2");
-    }
-
-    void init(const std::function<void(Service::Status)> reply) override
-    {
-        serp::logMethod("S2::init", reply);
-
-        // Call async method without args
-        mS1->Foo();
-
-        // Call async method with arg
-        mS1->SayHello("world");
-
-        // Call method with return value and syncroniusly wait for the reply
-        auto answer = mS1->GiveMeAnswer()->getValue();
-        serp::logInfo() << "GiveMeAnswer result: " << answer;
-
-        // Call method with return value and polling till result is ready
-        mAddPromise = mS1->Add(2, 3);
-        while (mAddPromise->isReady())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        }
-        serp::logInfo() << "mAddPromise result: " << mAddPromise->getValue();
-
-        // Call method with return value and subscribe for the reply
-        mAddPromise = mS1->Add(4, 9);
-        mAddPromise->subscribe([this](const int32_t reqiestId, const int32_t &result)
-                               {
-            serp::logMethod("S2::init::Add.subscribe", reqiestId, result);
-            serp::logInfo() << "mAddPromise result: " << mAddPromise->getValue(); });
-
-        reply(serp::Service::Status::SUCCESSFUL);
-    }
-
-    void deinit(const std::function<void(Service::Status)> reply) override
-    {
-        serp::logMethod("S2::deinit");
-
-        reply(serp::Service::Status::SUCCESSFUL);
-    }
-
-private:
-    std::shared_ptr<S1> mS1;
-    std::shared_ptr<serp::Promise<int32_t>> mAddPromise;
-};
-const std::string S2::THREAD = "S2T";
-const std::string S2::INTERFACE = "S2T";
-
 int main()
 {
     serp::logger::addStrategy<serp::LogStrategyConsole>();
 
     auto s1 = std::make_shared<S1>();
-    auto s2 = std::make_shared<S2>(s1);
 
     s1->Init();
-    s2->Init();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::cout << "Use interface methods to simulated calls. For Example:" << std::endl;
+    std::cout << "Foo()" << std::endl;
+    std::cout << "SayHello(world)" << std::endl;
+    std::cout << "GiveMeAnswer()" << std::endl;
+    std::cout << "Add(2,3)" << std::endl;
+
+    auto runtime = serp::RuntimeConsole();
+    runtime.run(true);
 
     serp::App::run();
 
-    s2->destroy();
+    runtime.stop();
+
     s1->destroy();
 
     return 0;
