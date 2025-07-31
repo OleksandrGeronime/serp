@@ -23,9 +23,43 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <list>
+#include <set>
+#include <map>
+#include <unordered_map>
 
 namespace serp
 {
+
+    template <typename T>
+    struct is_stl_container : std::false_type
+    {
+    };
+
+    template <typename... Args>
+    struct is_stl_container<std::vector<Args...>> : std::true_type
+    {
+    };
+
+    template <typename... Args>
+    struct is_stl_container<std::list<Args...>> : std::true_type
+    {
+    };
+
+    template <typename... Args>
+    struct is_stl_container<std::set<Args...>> : std::true_type
+    {
+    };
+
+    template <typename... Args>
+    struct is_stl_container<std::map<Args...>> : std::true_type
+    {
+    };
+
+    template <typename... Args>
+    struct is_stl_container<std::unordered_map<Args...>> : std::true_type
+    {
+    };
 
     template <typename T>
     T parseArg(const std::string &s);
@@ -36,7 +70,13 @@ namespace serp
     template <typename T>
     inline T parseArg(const std::string &s)
     {
-        if constexpr (std::is_same_v<T, std::string>)
+        if constexpr (is_stl_container<T>::value)
+        {
+            // TODO: custom parsing std::map, std::vector, etc.
+            T val;
+            return val;
+        }
+        else if constexpr (std::is_same_v<T, std::string>)
         {
             if (!s.empty() && s.front() == '"' && s.back() == '"')
             {
