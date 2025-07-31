@@ -1,0 +1,43 @@
+    @startuml ExampleProject
+    
+    interface INetworkManager <<internal>> #LightGreen
+    interface IPlayer <<internal>> #LightGreen
+    interface IUI <<external>> #LightGreen
+    interface IAudio <<internal>> #LightGreen
+    interface IVideo <<internal>> #LightGreen
+    interface INetwork <<external>> #LightGreen
+    interface IUserInput <<external>> #LightGreen
+    interface IStorage <<external>> #LightBlue
+    interface IAnalytics <<internal>> #LightGreen
+    interface IUIRenderer <<external>> #LightGreen
+    interface ISettings <<external>> #LightBlue
+    
+    component SettingsAdapter <<external>> <<SET>> #LightBlue
+    ISettings -- SettingsAdapter
+    
+    component StorageAdapter <<external>> <<STOR>> #LightBlue
+    IStorage -- StorageAdapter
+    
+    component Player <<internal>> <<PL>> #LightGreen
+    Player -- IPlayer
+    Player -- IAudio
+    Player -- IVideo
+    IUserInput -- Player
+    Player ...> IStorage
+    Player ..> INetworkManager
+    
+    component NetworkManager <<internal>> <<NM>> #LightGreen
+    NetworkManager -- INetworkManager
+    INetwork -- NetworkManager
+    NetworkManager -- IAnalytics
+    
+    component UI <<internal>> #LightGreen
+    IUI -- UI
+    IUIRenderer -- UI 
+    UI ..> IAnalytics
+    UI ..> IAudio
+    UI ..> IVideo
+    UI ..> IPlayer
+    UI ...> ISettings
+    
+    @enduml

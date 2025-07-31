@@ -1,0 +1,69 @@
+package com.ui;
+
+import com.common.Types;
+
+struct UserInteractionEvent {
+    String interactionType  // tap, swipe, button_press и т.д.
+    String target
+}
+
+interface UI {
+    version { major 0 minor 0 }
+
+    attribute String currentScreen readonly
+    attribute Boolean isNightMode
+    attribute Int32 brightness
+
+    method switchScreen {
+        in {
+            String screenName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method showNotification {
+        in {
+            String title
+            String message
+            Int32 timeoutMs
+        }
+    }
+
+    method clearNotification {
+        in {
+            String notificationId
+        }
+    }
+
+    method setBrightness {
+        in {
+            Int32 level  // 0–100
+        }
+    }
+
+    method toggleNightMode {
+        in {
+            Boolean enable
+        }
+    }
+
+    broadcast onUserInteraction {
+        out {
+            UserInteractionEvent event
+        }
+    }
+
+    broadcast onScreenChanged {
+        out {
+            String screenName
+        }
+    }
+
+    broadcast onBrightnessChanged {
+        out {
+            Int32 level
+        }
+    }
+}

@@ -1,0 +1,181 @@
+package com.network;
+
+import com.common.Types;
+
+interface Network {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Enums and Structs
+    // ================================
+
+    enum InterfaceType {
+        ETHERNET
+        WIFI
+        CELLULAR
+        LOOPBACK
+        UNKNOWN
+    }
+
+    enum ConnectionState {
+        DISCONNECTED
+        CONNECTING
+        CONNECTED
+        FAILED
+    }
+
+    enum IpProtocol {
+        IPV4
+        IPV6
+    }
+
+    struct IpAddress {
+        IpProtocol protocol
+        String address
+        Int32 prefixLength
+    }
+
+    struct NetworkInterface {
+        String name
+        InterfaceType type
+        ConnectionState state
+        IpAddress[] addresses
+        String mac
+    }
+
+    struct WifiNetwork {
+        String ssid
+        String bssid
+        Int32 signalStrength  // in dBm
+        Boolean secured
+    }
+
+    struct PingResult {
+        Boolean reachable
+        Int32 latencyMs
+    }
+
+    // ================================
+    // Methods
+    // ================================
+
+    method listInterfaces {
+        out {
+            NetworkInterface[] interfaces
+        }
+    }
+
+    method getInterfaceInfo {
+        in {
+            String interfaceName
+        }
+        out {
+            NetworkInterface info
+        }
+    }
+
+    method scanWifi {
+        out {
+            WifiNetwork[] availableNetworks
+        }
+    }
+
+    method connectWifi {
+        in {
+            String ssid
+            String password
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method disconnectWifi {
+        out {
+            Boolean success
+        }
+    }
+
+    method getConnectionState {
+        in {
+            String interfaceName
+        }
+        out {
+            ConnectionState state
+        }
+    }
+
+    method setStaticIp {
+        in {
+            String interfaceName
+            IpAddress ip
+            String gateway
+            String[] dnsServers
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method enableDhcp {
+        in {
+            String interfaceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method enableInterface {
+        in {
+            String interfaceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method disableInterface {
+        in {
+            String interfaceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method ping {
+        in {
+            String target
+        }
+        out {
+            PingResult result
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast InterfaceStateChanged {
+        String interfaceName
+        ConnectionState newState
+    }
+
+    broadcast IpAddressChanged {
+        String interfaceName
+        IpAddress[] addresses
+    }
+
+    broadcast WifiScanCompleted {
+        WifiNetwork[] networks
+    }
+
+    broadcast ConnectivityLost {
+        String interfaceName
+    }
+
+    broadcast ConnectivityRestored {
+        String interfaceName
+    }
+}

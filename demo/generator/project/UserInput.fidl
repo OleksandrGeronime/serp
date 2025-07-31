@@ -1,0 +1,133 @@
+package com.input;
+
+import com.common.Types;
+
+interface UserInput {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Enums and Structs
+    // ================================
+
+    enum InputType {
+        BUTTON
+        TOUCH
+        ROTARY
+        GESTURE
+        VOICE
+    }
+
+    enum ButtonAction {
+        PRESS
+        RELEASE
+        LONG_PRESS
+        DOUBLE_PRESS
+    }
+
+    struct ButtonEvent {
+        String buttonId
+        ButtonAction action
+        Int64 timestamp
+    }
+
+    struct TouchPoint {
+        float x
+        float y
+        Int32 id
+    }
+
+    struct TouchEvent {
+        String surfaceId
+        TouchPoint[] points
+        String phase  // begin, move, end
+        Int64 timestamp
+    }
+
+    struct GestureEvent {
+        String gestureId
+        String source
+        Int64 timestamp
+    }
+
+    struct VoiceCommand {
+        String command
+        String rawText
+        float confidence
+    }
+
+    // ================================
+    // Methods
+    // ================================
+
+    method registerInputSource {
+        in {
+            String sourceId
+            InputType type
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method unregisterInputSource {
+        in {
+            String sourceId
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method enableInputType {
+        in {
+            InputType type
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method disableInputType {
+        in {
+            InputType type
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method queryAvailableInputs {
+        out {
+            String[] sourceIds
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast ButtonInput {
+        ButtonEvent event
+    }
+
+    broadcast TouchInput {
+        TouchEvent event
+    }
+
+    broadcast GestureDetected {
+        GestureEvent event
+    }
+
+    broadcast VoiceCommandRecognized {
+        VoiceCommand command
+    }
+
+    broadcast InputSourceRegistered {
+        String sourceId
+        InputType type
+    }
+
+    broadcast InputSourceUnregistered {
+        String sourceId
+    }
+}

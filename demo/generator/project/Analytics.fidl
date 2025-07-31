@@ -1,0 +1,169 @@
+package com.analytics;
+
+import com.common.Types;
+
+interface Analytics {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Enums and Structs
+    // ================================
+
+    enum EventSeverity {
+        DEBUG
+        INFO
+        WARNING
+        ERROR
+        CRITICAL
+    }
+
+    enum MetricType {
+        COUNTER
+        GAUGE
+        TIMER
+        HISTOGRAM
+    }
+
+    struct Event {
+        String name
+        String category
+        map<String, String> parameters
+        EventSeverity severity
+        Int64 timestamp
+    }
+
+    struct Metric {
+        String name
+        MetricType type
+        double value
+        map<String, String> tags
+        Int64 timestamp
+    }
+
+    struct CrashReport {
+        String module
+        String reason
+        String stackTrace
+        Int64 timestamp
+        String sessionId
+    }
+
+    struct SessionInfo {
+        String sessionId
+        String userId
+        String platform
+        String locale
+        Int64 startTimestamp
+    }
+
+    // ================================
+    // Methods
+    // ================================
+
+    method sendEvent {
+        in {
+            Event event
+        }
+        out {
+            Boolean accepted
+        }
+    }
+
+    method sendMetric {
+        in {
+            Metric metric
+        }
+        out {
+            Boolean accepted
+        }
+    }
+
+    method reportCrash {
+        in {
+            CrashReport crash
+        }
+        out {
+            Boolean accepted
+        }
+    }
+
+    method startSession {
+        in {
+            SessionInfo info
+        }
+        out {
+            Boolean accepted
+        }
+    }
+
+    method endSession {
+        in {
+            String sessionId
+        }
+        out {
+            Boolean accepted
+        }
+    }
+
+    method isEnabled {
+        out {
+            Boolean enabled
+        }
+    }
+
+    method setEnabled {
+        in {
+            Boolean enable
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method setUserProperty {
+        in {
+            String key
+            String value
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method clearUserProperty {
+        in {
+            String key
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast EventSent {
+        Event event
+    }
+
+    broadcast MetricSent {
+        Metric metric
+    }
+
+    broadcast CrashReported {
+        CrashReport crash
+    }
+
+    broadcast SessionStarted {
+        String sessionId
+    }
+
+    broadcast SessionEnded {
+        String sessionId
+    }
+
+    broadcast AnalyticsStateChanged {
+        Boolean enabled
+    }
+}

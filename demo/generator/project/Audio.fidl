@@ -1,0 +1,128 @@
+package com.audio;
+
+import com.common.Types;
+
+interface Audio {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Attributes
+    // ================================
+    attribute Int32 volume
+    attribute Boolean muted
+    attribute String currentSource readonly
+    attribute Boolean isPlaying readonly
+    attribute Int32 balance  // -100 (left) to +100 (right)
+    attribute Int32 fader    // -100 (rear) to +100 (front)
+
+    // ================================
+    // Methods
+    // ================================
+
+    method playAudio {
+        in {
+            String sourceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method pauseAudio {
+        out {
+            Boolean success
+        }
+    }
+
+    method stopAudio {
+        out {
+            Boolean success
+        }
+    }
+
+    method nextTrack {
+        out {
+            Boolean success
+        }
+    }
+
+    method previousTrack {
+        out {
+            Boolean success
+        }
+    }
+
+    method setAudioVolume {
+        in {
+            Int32 volumeLevel  // 0–100
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method toggleMute {
+        out {
+            Boolean muted
+        }
+    }
+
+    method setBalance {
+        in {
+            Int32 value  // -100 (left) to +100 (right)
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method setFader {
+        in {
+            Int32 value  // -100 (rear) to +100 (front)
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method getAvailableSources {
+        out {
+            String[] sources
+        }
+    }
+
+    method selectAudioSource {
+        in {
+            String sourceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast VolumeChanged {
+        Int32 newVolume
+    }
+
+    broadcast MuteChanged {
+        Boolean muted
+    }
+
+    broadcast PlaybackStateChanged {
+        Boolean isPlaying
+    }
+
+    broadcast CurrentSourceChanged {
+        String newSource
+    }
+
+    broadcast TrackInfoChanged {
+        String title
+        String artist
+        Int32 durationMs
+    }
+}

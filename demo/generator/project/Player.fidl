@@ -1,0 +1,57 @@
+package com.media;
+
+import com.common.Types;
+
+interface Player {
+    version { major 0 minor 0 }
+
+    attribute String currentTrack readonly
+    attribute Int32 currentPosition
+    attribute Boolean isPlaying readonly
+
+    method play {
+        in {
+            String uri
+        }
+    }
+
+    method pause { }
+
+    method stop { }
+
+    method seek {
+        in {
+            Int32 positionMs
+        }
+    }
+
+    method setVolume {
+        in {
+            float level
+        }
+    }
+
+    method getVolume {
+        out {
+            float level
+        }
+    }
+
+    broadcast onTrackChanged {
+        out {
+            String newTrack
+        }
+    }
+
+    broadcast onPlaybackStateChanged {
+        out {
+            Boolean isPlaying
+        }
+    }
+
+    broadcast onPositionChanged {
+        out {
+            Int32 positionMs
+        }
+    }
+}

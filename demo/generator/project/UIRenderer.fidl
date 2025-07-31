@@ -1,0 +1,174 @@
+package com.ui;
+
+import com.common.Types;
+
+interface UIRenderer {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Enums and Structs
+    // ================================
+
+    enum RenderState {
+        IDLE
+        RENDERING
+        ERROR
+    }
+
+    enum LayerType {
+        BASE
+        OVERLAY
+        POPUP
+        SYSTEM
+    }
+
+    struct Scene {
+        String id
+        String name
+        map<String, String> parameters
+    }
+
+    struct Layer {
+        String id
+        LayerType type
+        Int32 zOrder
+        Boolean visible
+    }
+
+    struct RenderStats {
+        Int32 fps
+        Int32 droppedFrames
+        Int64 lastFrameTimeMs
+    }
+
+    struct Component {
+        String id
+        String type
+        map<String, String> properties
+    }
+
+    // ================================
+    // Methods
+    // ================================
+
+    method loadScene {
+        in {
+            Scene scene
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method unloadScene {
+        in {
+            String sceneId
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method showLayer {
+        in {
+            String layerId
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method hideLayer {
+        in {
+            String layerId
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method setComponentProperty {
+        in {
+            String componentId
+            String key
+            String value
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method getComponentProperty {
+        in {
+            String componentId
+            String key
+        }
+        out {
+            String value
+        }
+    }
+
+    method triggerAnimation {
+        in {
+            String componentId
+            String animationName
+        }
+        out {
+            Boolean started
+        }
+    }
+
+    method getRenderState {
+        out {
+            RenderState state
+        }
+    }
+
+    method getRenderStats {
+        out {
+            RenderStats stats
+        }
+    }
+
+    method reloadUI {
+        out {
+            Boolean success
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast SceneLoaded {
+        String sceneId
+    }
+
+    broadcast SceneUnloaded {
+        String sceneId
+    }
+
+    broadcast RenderStateChanged {
+        RenderState newState
+    }
+
+    broadcast LayerVisibilityChanged {
+        String layerId
+        Boolean visible
+    }
+
+    broadcast ComponentUpdated {
+        String componentId
+        map<String, String> newProperties
+    }
+
+    broadcast AnimationStarted {
+        String componentId
+        String animationName
+    }
+
+    broadcast AnimationFinished {
+        String componentId
+        String animationName
+    }
+}

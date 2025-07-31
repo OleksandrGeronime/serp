@@ -1,0 +1,118 @@
+package com.storage;
+
+import com.common.Types;
+
+interface Storage {
+    version { major 0 minor 0 }
+
+    attribute Boolean isMounted readonly
+    attribute Int64 totalSpace readonly
+    attribute Int64 freeSpace readonly
+    attribute String currentMountPoint readonly
+
+    struct MountResult {
+        Boolean success
+        String message
+    }
+
+    struct UnmountResult {
+        Boolean success
+        String message
+    }
+
+    struct FormatResult {
+        Boolean success
+        String error
+    }
+
+    struct FileInfo {
+        Int64 size
+        String modifiedDate
+        Boolean isDirectory
+    }
+
+    method mount {
+        out {
+            MountResult result
+        }
+    }
+
+    method unmount {
+        out {
+            UnmountResult result
+        }
+    }
+
+    method format {
+        in {
+            String fileSystemType
+        }
+        out {
+            FormatResult result
+        }
+    }
+
+    method listFiles {
+        in {
+            String path
+        }
+        out {
+            String[] entries
+        }
+    }
+
+    method readFile {
+        in {
+            String filePath
+        }
+        out {
+            UInt8[] content
+        }
+    }
+
+    method writeFile {
+        in {
+            String filePath
+            UInt8[] content
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method deleteFile {
+        in {
+            String filePath
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method getFileInfo {
+        in {
+            String filePath
+        }
+        out {
+            FileInfo info
+        }
+    }
+
+    broadcast onStorageMounted {
+        out {
+            String mountPoint
+        }
+    }
+
+    broadcast onStorageUnmounted {
+        out {
+            String mountPoint
+        }
+    }
+
+    broadcast onStorageError {
+        out {
+            String errorMessage
+        }
+    }
+}

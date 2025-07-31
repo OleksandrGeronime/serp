@@ -1,0 +1,89 @@
+package com.connectivity;
+
+import com.common.Types;
+
+struct GetStatusResponse {
+    String interfaceName
+    Boolean connected
+    String ipAddress
+}
+
+struct ConnectivityChangedEvent {
+    Boolean connected
+    String interfaceName
+}
+
+struct NMWifiNetwork {
+    String ssid
+    String bssid
+    Int32 signalStrength  // in dBm
+    Boolean secured
+}
+
+struct WifiNetworksFoundEvent {
+    String interfaceName
+    NMWifiNetwork[] networks
+}
+
+interface NetworkManager {
+    version { major 0 minor 0 }
+
+    attribute Boolean connected readonly
+    attribute String activeInterface readonly
+    attribute String currentIpAddress readonly
+
+    method connect {
+        in {
+            String interfaceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method disconnect {
+        in {
+            String interfaceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method scanNetworks {
+        in {
+            String interfaceName
+        }
+        out {
+            NMWifiNetwork[] availableNetworks
+        }
+    }
+
+    method configureWifi {
+        in {
+            String ssid
+            String password
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method getStatus {
+        out {
+            GetStatusResponse result
+        }
+    }
+
+    broadcast onConnectivityChanged {
+        out {
+            ConnectivityChangedEvent info
+        }
+    }
+
+    broadcast onWifiNetworksFound {
+        out {
+            WifiNetworksFoundEvent data
+        }
+    }
+}

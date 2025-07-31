@@ -1,0 +1,170 @@
+package com.video;
+
+import com.common.Types;
+
+interface Video {
+    version { major 1 minor 0 }
+
+    // ================================
+    // Attributes
+    // ================================
+    attribute String currentSource readonly
+    attribute Boolean isPlaying readonly
+    attribute Int32 playbackPositionMs readonly
+    attribute Int32 durationMs readonly
+    attribute Boolean isFullscreen
+    attribute Int32 brightness   // 0–100
+    attribute Int32 contrast     // 0–100
+    attribute Int32 volume       // 0–100
+    attribute Boolean muted
+
+    // ================================
+    // Methods
+    // ================================
+
+    method playVideo {
+        in {
+            String sourceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method pauseVideo {
+        out {
+            Boolean success
+        }
+    }
+
+    method stopVideo {
+        out {
+            Boolean success
+        }
+    }
+
+    method seekTo {
+        in {
+            Int32 positionMs
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method fastForward {
+        in {
+            Int32 speed  // e.g., 2x, 4x
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method rewind {
+        in {
+            Int32 speed  // e.g., 2x, 4x
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method nextVideo {
+        out {
+            Boolean success
+        }
+    }
+
+    method previousVideo {
+        out {
+            Boolean success
+        }
+    }
+
+    method setBrightness {
+        in {
+            Int32 value  // 0–100
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method setContrast {
+        in {
+            Int32 value  // 0–100
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method toggleFullscreen {
+        out {
+            Boolean isFullscreen
+        }
+    }
+
+    method getAvailableSources {
+        out {
+            String[] sources
+        }
+    }
+
+    method selectVideoSource {
+        in {
+            String sourceName
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method setVideoVolume {
+        in {
+            Int32 level  // 0–100
+        }
+        out {
+            Boolean success
+        }
+    }
+
+    method toggleMute {
+        out {
+            Boolean muted
+        }
+    }
+
+    // ================================
+    // Broadcasts
+    // ================================
+
+    broadcast PlaybackStateChanged {
+        Boolean isPlaying
+        Int32 positionMs
+    }
+
+    broadcast CurrentSourceChanged {
+        String newSource
+    }
+
+    broadcast TrackInfoChanged {
+        String title
+        String director
+        String genre
+        Int32 durationMs
+    }
+
+    broadcast VolumeChanged {
+        Int32 newVolume
+    }
+
+    broadcast MuteChanged {
+        Boolean muted
+    }
+
+    broadcast FullscreenChanged {
+        Boolean isFullscreen
+    }
+}

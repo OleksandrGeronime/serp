@@ -1,0 +1,101 @@
+package com.settings;
+
+import com.common.Types;
+
+struct SetLanguageResult {
+    Boolean success
+}
+
+struct ResetResult {
+    Boolean success
+}
+
+struct PairResult {
+    Boolean success
+}
+
+struct UnpairResult {
+    Boolean success
+}
+
+struct SettingsChangedEvent {
+    String settingName
+    String newValue
+}
+
+struct BluetoothStatus {
+    Boolean enabled
+    String connectedDevice
+}
+
+interface Settings {
+    version { major 0 minor 0 }
+
+    attribute String currentLanguage
+    attribute String timeZone
+    attribute Boolean isMetric
+    attribute Int32 volumeLevel
+    attribute Boolean bluetoothEnabled
+    attribute String pairedDeviceName readonly
+
+    method setLanguage {
+        in {
+            String languageCode
+        }
+        out {
+            SetLanguageResult result
+        }
+    }
+
+    method setTimeZone {
+        in {
+            String tzName
+        }
+    }
+
+    method toggleUnits {
+        in {
+            Boolean useMetric
+        }
+    }
+
+    method setVolumeLevel {
+        in {
+            Int32 level
+        }
+    }
+
+    method resetToDefaults {
+        out {
+            ResetResult result
+        }
+    }
+
+    method pairBluetoothDevice {
+        in {
+            String deviceName
+            String pinCode
+        }
+        out {
+            PairResult result
+        }
+    }
+
+    method unpairBluetoothDevice {
+        out {
+            UnpairResult result
+        }
+    }
+
+    broadcast onSettingsChanged {
+        out {
+            SettingsChangedEvent change
+        }
+    }
+
+    broadcast onBluetoothStatusChanged {
+        out {
+            BluetoothStatus status
+        }
+    }
+}
