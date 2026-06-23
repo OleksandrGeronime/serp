@@ -91,4 +91,9 @@ See [serp-demo](https://github.com/OleksandrGeronime/serp-demo) for hands-on exa
 
 ## License
 
-Copyright (c) 2025-2026 Oleksandr Geronime. All rights reserved.
+SERP is distributed in binary form under the
+[Polyform Noncommercial License 1.0.0](LICENSE) —
+free for noncommercial use.
+
+Commercial use requires a separate license.
+See [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md) for details.
