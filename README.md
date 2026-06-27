@@ -33,23 +33,13 @@ brew update && brew upgrade OleksandrGeronime/serp/serp-dev
 
 ## Ubuntu / Debian
 
-### Manual install
-
-Download the latest `.deb` packages from the [Releases](https://github.com/OleksandrGeronime/serp/releases/latest) page and install:
+Download `.deb` packages from [Releases](https://github.com/OleksandrGeronime/serp/releases/latest) and install:
 
 ```bash
-# Replace x.y.z with the version you want
-VERSION=0.5.0
-
-wget https://github.com/OleksandrGeronime/serp/releases/download/v${VERSION}/serp_${VERSION}_amd64.deb
-wget https://github.com/OleksandrGeronime/serp/releases/download/v${VERSION}/serp-dev_${VERSION}_amd64.deb
-
-sudo dpkg -i serp_${VERSION}_amd64.deb serp-dev_${VERSION}_amd64.deb
+sudo dpkg -i serp_*.deb serp-dev_*.deb
 ```
 
-### Upgrade (if already installed)
-
-Download the new `.deb` from [Releases](https://github.com/OleksandrGeronime/serp/releases/latest) and re-run `dpkg -i`.
+Full instructions: [Installation](https://github.com/OleksandrGeronime/serp/wiki/Installation)
 
 ---
 
