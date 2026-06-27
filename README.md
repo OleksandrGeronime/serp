@@ -15,38 +15,23 @@ SERP turns a high-level service specification into a generated skeleton — serv
 
 ## macOS
 
+### Homebrew (recommended)
+
+```bash
+brew tap OleksandrGeronime/serp
+brew trust OleksandrGeronime/serp
+brew install OleksandrGeronime/serp/serp-dev   # or: serp
+```
+
 ### Upgrade (if already installed)
 
 ```bash
 brew update && brew upgrade OleksandrGeronime/serp/serp-dev
 ```
 
-### One-liner install (recommended)
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/OleksandrGeronime/homebrew-serp/main/install.sh)"
-```
-
-Installs `serp-dev` (includes everything). Runtime-only:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/OleksandrGeronime/homebrew-serp/main/install.sh)" -- serp
-```
-
-### Manual install (Homebrew)
-
-```bash
-brew tap OleksandrGeronime/serp
-brew install OleksandrGeronime/serp/serp-dev   # or: serp
-```
-
 ---
 
 ## Ubuntu / Debian
-
-### Upgrade (if already installed)
-
-Download the new `.deb` from [Releases](https://github.com/OleksandrGeronime/serp/releases/latest) and re-run `dpkg -i`.
 
 ### Manual install
 
@@ -61,6 +46,10 @@ wget https://github.com/OleksandrGeronime/serp/releases/download/v${VERSION}/ser
 
 sudo dpkg -i serp_${VERSION}_amd64.deb serp-dev_${VERSION}_amd64.deb
 ```
+
+### Upgrade (if already installed)
+
+Download the new `.deb` from [Releases](https://github.com/OleksandrGeronime/serp/releases/latest) and re-run `dpkg -i`.
 
 ---
 
