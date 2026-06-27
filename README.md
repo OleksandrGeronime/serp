@@ -97,6 +97,19 @@ target_link_libraries(your_target Serp::core Serp::transport Serp::logger_consol
 
 ---
 
+## Documentation
+
+Full documentation is available in the [Wiki](https://github.com/OleksandrGeronime/serp/wiki):
+
+- [Quick Start](https://github.com/OleksandrGeronime/serp/wiki/Quick-Start)
+- [Core Concepts](https://github.com/OleksandrGeronime/serp/wiki/Core-Concepts)
+- [SerpIDL — Spec Format](https://github.com/OleksandrGeronime/serp/wiki/SerpIDL-Overview)
+- [Code Generator](https://github.com/OleksandrGeronime/serp/wiki/Generator-Overview)
+- [VS Code Plugin](https://github.com/OleksandrGeronime/serp/wiki/Plugin-Overview)
+- [AI-Driven Development](https://github.com/OleksandrGeronime/serp/wiki/AI-Driven-Development)
+
+---
+
 ## License
 
 SERP is distributed in binary form under the
