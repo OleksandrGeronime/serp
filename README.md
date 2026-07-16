@@ -1,8 +1,8 @@
 # SERP
 
-**SERP** (Service · Event · Runtime · Platform) — a C++ framework for building distributed, multiprocess systems.
+**SERP** (Service · Event · Runtime · Platform) — a C++ framework for building large distributed, multiprocess systems with AI.
 
-SERP turns a high-level service specification into a generated skeleton — services, interfaces, transports — that compiles and runs out of the box. You fill in the business logic; the framework handles threading, IPC, RPC, watchdogs, and lifecycle.
+SERP turns a high-level service specification into a generated skeleton — services, interfaces, transports — that compiles and runs out of the box. You fill in the business logic; the framework handles threading, IPC, RPC, watchdogs, and lifecycle. That same boundary is what scopes AI work: the [VS Code extension](#vs-code-extension) turns it into role-scoped AI sessions, durable design contracts, and batch implementation runs that can build out a whole system's services at once.
 
 ## Packages
 
@@ -78,11 +78,12 @@ target_link_libraries(your_target Serp::core Serp::transport Serp::logger_consol
 
 | Feature | Description |
 |---|---|
-| **Explorer** | Browse deployments, services, spec files, and source files in one tree. Validate and regenerate directly from the panel. |
-| **Active Deployment** | Build, run, and stop the active deployment. Shows processes, the services they host, and direct links to impl and generated files. |
+| **Explorer** | Browse specs, deployments (build/run/stop, processes, hosted services), and services (interfaces, sequences, tests, generated + impl files) in one tree. Validate and regenerate directly from the panel. |
 | **Architecture Dashboard** | Interactive live view — process cards with live CPU/MEM stats, one-click access to sessions and impl files. |
 | **Runtime Inspector** | Call methods with typed inputs, read and watch properties, subscribe to notifications — directly on the running process, no client code needed. Works over gRPC or D-Bus. |
-| **SERP AI** | Scoped Claude Code sessions per role (Architecture · Service · HMI · Debug). Each session loads its own responsibility, allowed writes, and context from the MCP server. A context guard hook keeps Claude current; a scope guard enforces write restrictions on every edit. |
+| **SERP AI Sessions** | Scoped agent sessions — architecture, service, HMI, sequence, debug/fix, freeform exploration — on a pluggable backend (Claude Code or Codex). A context guard hook keeps the agent current; a scope guard enforces write restrictions on every edit. |
+| **Design Contracts** | Durable, user-approved design blocks that gate what an AI session may call "implemented," with a sync path for projects adopting it after the fact. |
+| **SERP AI Runs** | Batch-plans and spawns implementation sessions for every design block that isn't implemented yet, project-wide, as one resumable job — this is how SERP scales AI-driven development across many services at once. |
 
 **Keyboard shortcuts:**
 
@@ -107,6 +108,9 @@ Full documentation is available in the [Wiki](https://github.com/OleksandrGeroni
 - [Code Generator](https://github.com/OleksandrGeronime/serp/wiki/Generator-Overview)
 - [VS Code Plugin](https://github.com/OleksandrGeronime/serp/wiki/Plugin-Overview)
 - [AI-Driven Development](https://github.com/OleksandrGeronime/serp/wiki/AI-Driven-Development)
+- [SERP AI Sessions](https://github.com/OleksandrGeronime/serp/wiki/SERP-AI-Sessions)
+- [Design Contracts](https://github.com/OleksandrGeronime/serp/wiki/Design-Contracts)
+- [Implementation Runs](https://github.com/OleksandrGeronime/serp/wiki/Implementation-Runs)
 
 ---
 
